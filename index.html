@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>731测试网站by罗子翔</title>
+    <title>English Club by Luo Zixiang</title>
     <style>
         /* 基础样式重置 */
         * {
@@ -54,6 +54,7 @@
         .nav-links {
             display: flex;
             list-style: none;
+            align-items: center;
         }
         
         .nav-links li {
@@ -69,6 +70,22 @@
         
         .nav-links a:hover {
             color: #ffd166;
+        }
+        
+        /* 语言切换按钮 */
+        .lang-switch {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .lang-switch:hover {
+            background: rgba(255, 255, 255, 0.3);
         }
         
         /* 英雄区域样式 */
@@ -363,13 +380,14 @@
     <nav class="navbar">
         <div class="nav-container">
             <div class="logo">
-                <span>English Club</span>
+                <span data-en="English Club" data-zh="英语俱乐部">English Club</span>
             </div>
             <ul class="nav-links">
-                <li><a href="#home">首页</a></li>
-                <li><a href="#about">关于我们</a></li>
-                <li><a href="#activities">活动</a></li>
-                <li><a href="#join">加入我们</a></li>
+                <li><a href="#home" data-en="Home" data-zh="首页">Home</a></li>
+                <li><a href="#about" data-en="About Us" data-zh="关于我们">About Us</a></li>
+                <li><a href="#activities" data-en="Activities" data-zh="活动">Activities</a></li>
+                <li><a href="#join" data-en="Join Us" data-zh="加入我们">Join Us</a></li>
+                <li><button class="lang-switch" id="langSwitch">中文</button></li>
             </ul>
         </div>
     </nav>
@@ -377,21 +395,21 @@
     <!-- 英雄区域 -->
     <section class="hero" id="home">
         <div class="hero-content">
-            <h1>欢迎加入英语俱乐部</h1>
-            <p>提高英语水平，结交新朋友，探索多元文化</p>
-            <a href="#join" class="cta-button">立即加入</a>
+            <h1 data-en="Welcome to English Club" data-zh="欢迎加入英语俱乐部">Welcome to English Club</h1>
+            <p data-en="Improve your English, make new friends, explore diverse cultures" data-zh="提高英语水平，结交新朋友，探索多元文化">Improve your English, make new friends, explore diverse cultures</p>
+            <a href="#join" class="cta-button" data-en="Join Now" data-zh="立即加入">Join Now</a>
         </div>
     </section>
 
     <!-- 关于俱乐部 -->
     <section class="about" id="about">
         <div class="container">
-            <h2 class="section-title">关于英语俱乐部</h2>
+            <h2 class="section-title" data-en="About English Club" data-zh="关于英语俱乐部">About English Club</h2>
             <div class="about-content">
                 <div class="about-text">
-                    <p>英语俱乐部是一个为学生提供英语学习和交流的平台。我们致力于创造轻松愉快的学习环境，帮助成员提高英语口语能力，了解不同文化，结交志同道合的朋友。</p>
-                    <p>无论你是英语初学者还是高级学习者，我们都欢迎你加入我们的大家庭。我们的活动形式多样，包括主题讨论、电影之夜、游戏互动和文化分享等。</p>
-                    <p>我们相信，学习一门语言不仅仅是掌握词汇和语法，更是打开一扇通往世界的窗户。加入我们，一起开启精彩的英语之旅！</p>
+                    <p data-en="The English Club is a platform for students to learn and communicate in English. We are committed to creating a relaxed and enjoyable learning environment to help members improve their English speaking skills, learn about different cultures, and make like-minded friends." data-zh="英语俱乐部是一个为学生提供英语学习和交流的平台。我们致力于创造轻松愉快的学习环境，帮助成员提高英语口语能力，了解不同文化，结交志同道合的朋友。">The English Club is a platform for students to learn and communicate in English. We are committed to creating a relaxed and enjoyable learning environment to help members improve their English speaking skills, learn about different cultures, and make like-minded friends.</p>
+                    <p data-en="Whether you are a beginner or an advanced English learner, you are welcome to join our big family. Our activities are diverse, including themed discussions, movie nights, interactive games, and cultural sharing." data-zh="无论你是英语初学者还是高级学习者，我们都欢迎你加入我们的大家庭。我们的活动形式多样，包括主题讨论、电影之夜、游戏互动和文化分享等。">Whether you are a beginner or an advanced English learner, you are welcome to join our big family. Our activities are diverse, including themed discussions, movie nights, interactive games, and cultural sharing.</p>
+                    <p data-en="We believe that learning a language is not just about mastering vocabulary and grammar, but also about opening a window to the world. Join us and start an amazing English journey together!" data-zh="我们相信，学习一门语言不仅仅是掌握词汇和语法，更是打开一扇通往世界的窗户。加入我们，一起开启精彩的英语之旅！">We believe that learning a language is not just about mastering vocabulary and grammar, but also about opening a window to the world. Join us and start an amazing English journey together!</p>
                 </div>
                 <div class="about-image">
                     <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="英语俱乐部活动">
@@ -403,15 +421,15 @@
     <!-- 活动区域 -->
     <section class="activities" id="activities">
         <div class="container">
-            <h2 class="section-title">我们的活动</h2>
+            <h2 class="section-title" data-en="Our Activities" data-zh="我们的活动">Our Activities</h2>
             <div class="activities-grid">
                 <div class="activity-card">
                     <div class="activity-image">
                         <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="英语角活动">
                     </div>
                     <div class="activity-content">
-                        <h3 class="activity-title">英语角</h3>
-                        <p>每周一次的英语角活动，提供自由交流的平台，主题涵盖日常生活、文化差异和时事热点。</p>
+                        <h3 class="activity-title" data-en="English Corner" data-zh="英语角">English Corner</h3>
+                        <p data-en="Weekly English corner activities provide a platform for free communication, covering topics from daily life, cultural differences to current affairs." data-zh="每周一次的英语角活动，提供自由交流的平台，主题涵盖日常生活、文化差异和时事热点。">Weekly English corner activities provide a platform for free communication, covering topics from daily life, cultural differences to current affairs.</p>
                     </div>
                 </div>
                 <div class="activity-card">
@@ -419,8 +437,8 @@
                         <img src="https://youke1.picui.cn/s1/2025/10/04/68e0e9898f8c3.png" alt="电影之夜">
                     </div>
                     <div class="activity-content">
-                        <h3 class="activity-title">电影之夜</h3>
-                        <p>每月一次的电影之夜，观看经典英语电影并进行讨论，提高听力和理解能力。（注：这里的图片没有找到合适的，所以看看小梓吧）</p>
+                        <h3 class="activity-title" data-en="Movie Night" data-zh="电影之夜">Movie Night</h3>
+                        <p data-en="Monthly movie nights where we watch classic English films and discuss them to improve listening and comprehension skills. (Note: Couldn't find a suitable image for this, so here's Xiao Zi)" data-zh="每月一次的电影之夜，观看经典英语电影并进行讨论，提高听力和理解能力。（注：这里的图片没有找到合适的，所以看看小梓吧）">Monthly movie nights where we watch classic English films and discuss them to improve listening and comprehension skills. (Note: Couldn't find a suitable image for this, so here's Xiao Zi)</p>
                     </div>
                 </div>
                 <div class="activity-card">
@@ -428,8 +446,8 @@
                         <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="文化分享会">
                     </div>
                     <div class="activity-content">
-                        <h3 class="activity-title">文化分享会</h3>
-                        <p>邀请来自不同国家的朋友分享他们的文化，拓宽国际视野，增进跨文化理解。</p>
+                        <h3 class="activity-title" data-en="Cultural Sharing" data-zh="文化分享会">Cultural Sharing</h3>
+                        <p data-en="Invite friends from different countries to share their cultures, broaden international perspectives, and enhance cross-cultural understanding." data-zh="邀请来自不同国家的朋友分享他们的文化，拓宽国际视野，增进跨文化理解。">Invite friends from different countries to share their cultures, broaden international perspectives, and enhance cross-cultural understanding.</p>
                     </div>
                 </div>
             </div>
@@ -439,22 +457,22 @@
     <!-- 加入我们 -->
     <section class="join" id="join">
         <div class="container">
-            <h2 class="section-title">加入我们</h2>
-            <p>填写以下表格，成为英语俱乐部的一员</p>
+            <h2 class="section-title" data-en="Join Us" data-zh="加入我们">Join Us</h2>
+            <p data-en="Fill out the form below to become a member of the English Club" data-zh="填写以下表格，成为英语俱乐部的一员">Fill out the form below to become a member of the English Club</p>
             <form class="join-form">
                 <div class="form-group">
-                    <label for="name">姓名</label>
+                    <label for="name" data-en="Name" data-zh="姓名">Name</label>
                     <input type="text" id="name" required>
                 </div>
                 <div class="form-group">
-                    <label for="email">电子邮箱</label>
+                    <label for="email" data-en="Email" data-zh="电子邮箱">Email</label>
                     <input type="email" id="email" required>
                 </div>
                 <div class="form-group">
-                    <label for="message">留言 (可选)</label>
+                    <label for="message" data-en="Message (Optional)" data-zh="留言 (可选)">Message (Optional)</label>
                     <textarea id="message" rows="4"></textarea>
                 </div>
-                <button type="submit" class="submit-btn">提交申请</button>
+                <button type="submit" class="submit-btn" data-en="Submit Application" data-zh="提交申请">Submit Application</button>
             </form>
         </div>
     </section>
@@ -463,31 +481,58 @@
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-section">
-                <h3>联系我们</h3>
-                <p>邮箱: luow01644@gmail.com</p>
-                <p>电话: +86 19176850506</p>
+                <h3 data-en="Contact Us" data-zh="联系我们">Contact Us</h3>
+                <p data-en="Email: luow01644@gmail.com" data-zh="邮箱: luow01644@gmail.com">Email: luow01644@gmail.com</p>
+                <p data-en="Phone: +86 19176850506" data-zh="电话: +86 19176850506">Phone: +86 19176850506</p>
             </div>
             <div class="footer-section">
-                <h3>活动地点</h3>
-                <p>祁阳四中三栋4楼 731教室</p>
-                <p>每周五 18:00-20:00</p>
+                <h3 data-en="Location" data-zh="活动地点">Location</h3>
+                <p data-en="Classroom 731, 4th Floor, Building 3, Qiyang No.4 High School" data-zh="祁阳四中三栋4楼 731教室">Classroom 731, 4th Floor, Building 3, Qiyang No.4 High School</p>
+                <p data-en="Every Friday 18:00-20:00" data-zh="每周五 18:00-20:00">Every Friday 18:00-20:00</p>
             </div>
             <div class="footer-section">
-                <h3>关注我们</h3>
+                <h3 data-en="Follow Us" data-zh="关注我们">Follow Us</h3>
                 <div class="social-links">
-                    <a href="https://space.bilibili.com/3493288873036028" class="social-links">B站</a>
-                    <a href="https://t.me/+2i9kbfqB7qs0ZTY1" class="social-links">TG</a>
-                    <a href="https://qm.qq.com/q/PcJARZZsY2" class="social-links">QQ</a>
-                    <a href="https://github.com/aaqaaqs/aaqaaqs.github.io" class="social-links">github</a>
+                    <a href="https://space.bilibili.com/3493288873036028" class="social-link">B站</a>
+                    <a href="https://t.me/+2i9kbfqB7qs0ZTY1" class="social-link">TG</a>
+                    <a href="https://qm.qq.com/q/PcJARZZsY2" class="social-link">QQ</a>
+                    <a href="https://github.com/aaqaaqs/aaqaaqs.github.io" class="social-link">GitHub</a>
                 </div>
             </div>
         </div>
         <div class="copyright">
-            <p>&copy; 2025 英语俱乐部 版权所有</p>
+            <p data-en="&copy; 2025 English Club. All Rights Reserved." data-zh="&copy; 2025 英语俱乐部 版权所有">&copy; 2025 English Club. All Rights Reserved.</p>
         </div>
     </footer>
 
     <script>
+        // 语言切换功能
+        let currentLang = 'en'; // 默认语言为英语
+        const langSwitch = document.getElementById('langSwitch');
+        
+        // 切换语言函数
+        function switchLanguage() {
+            if (currentLang === 'en') {
+                currentLang = 'zh';
+                langSwitch.textContent = 'English';
+            } else {
+                currentLang = 'en';
+                langSwitch.textContent = '中文';
+            }
+            
+            // 更新所有带有data-en和data-zh属性的元素
+            document.querySelectorAll('[data-en]').forEach(element => {
+                if (currentLang === 'en') {
+                    element.textContent = element.getAttribute('data-en');
+                } else {
+                    element.textContent = element.getAttribute('data-zh');
+                }
+            });
+        }
+        
+        // 添加语言切换按钮点击事件
+        langSwitch.addEventListener('click', switchLanguage);
+        
         // 平滑滚动导航
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function(e) {
@@ -514,9 +559,12 @@
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             
-            // 在实际应用中，这里应该将数据发送到服务器
-            // 这里我们只做一个简单的成功提示
-            alert(`感谢 ${name} 的申请！我们会通过 ${email} 联系你。`);
+            // 根据当前语言显示不同的提示信息
+            if (currentLang === 'en') {
+                alert(`Thank you ${name} for your application! We will contact you at ${email}.`);
+            } else {
+                alert(`感谢 ${name} 的申请！我们会通过 ${email} 联系你。`);
+            }
             
             // 重置表单
             joinForm.reset();
