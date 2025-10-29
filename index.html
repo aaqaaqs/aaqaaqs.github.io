@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>生日快乐，王睿琪！</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎂</text></svg>">
+    <title>王睿琪16岁生日快乐！</title>
     <style>
         * {
             margin: 0;
@@ -15,79 +14,12 @@
         
         body {
             background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
-            color: #5a3e36;
+            color: #333;
             line-height: 1.6;
-            overflow-x: hidden;
             min-height: 100vh;
+            overflow-x: hidden;
         }
         
-        /* 气球动画 */
-        .balloon {
-            position: absolute;
-            width: 40px;
-            height: 50px;
-            background: #ff6b6b;
-            border-radius: 50%;
-            animation: float 15s infinite ease-in-out;
-            z-index: -1;
-        }
-        
-        .balloon:before {
-            content: "";
-            position: absolute;
-            width: 2px;
-            height: 40px;
-            background: #ff6b6b;
-            top: 50px;
-            left: 19px;
-        }
-        
-        .balloon:nth-child(2) {
-            left: 10%;
-            background: #ffd166;
-            animation-delay: 2s;
-        }
-        
-        .balloon:nth-child(3) {
-            left: 20%;
-            background: #06d6a0;
-            animation-delay: 4s;
-        }
-        
-        .balloon:nth-child(4) {
-            left: 30%;
-            background: #118ab2;
-            animation-delay: 6s;
-        }
-        
-        .balloon:nth-child(5) {
-            left: 40%;
-            background: #ef476f;
-            animation-delay: 8s;
-        }
-        
-        .balloon:nth-child(6) {
-            left: 60%;
-            background: #ffd166;
-            animation-delay: 10s;
-        }
-        
-        .balloon:nth-child(7) {
-            left: 80%;
-            background: #06d6a0;
-            animation-delay: 12s;
-        }
-        
-        @keyframes float {
-            0%, 100% {
-                transform: translateY(0) rotate(0);
-            }
-            50% {
-                transform: translateY(-20px) rotate(5deg);
-            }
-        }
-        
-        /* 容器样式 */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -97,87 +29,90 @@
         /* 头部样式 */
         header {
             text-align: center;
-            padding: 60px 20px;
-            position: relative;
-        }
-        
-        .birthday-title {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            color: #d63384;
-            text-shadow: 3px 3px 0 rgba(255, 215, 0, 0.5);
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .birthday-subtitle {
-            font-size: 1.8rem;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
             margin-bottom: 30px;
-            color: #5a3e36;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            color: #e91e63;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .subtitle {
+            font-size: 1.5rem;
+            color: #ff5722;
+            margin-bottom: 20px;
         }
         
         /* 倒计时样式 */
         .countdown {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .countdown-title {
+            font-size: 1.8rem;
+            color: #e91e63;
+            margin-bottom: 20px;
+        }
+        
+        .countdown-container {
             display: flex;
             justify-content: center;
             gap: 20px;
-            margin: 40px 0;
             flex-wrap: wrap;
         }
         
         .countdown-item {
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 10px;
+            background: linear-gradient(135deg, #ff6b6b, #ffa8a8);
+            color: white;
             padding: 15px;
+            border-radius: 10px;
             min-width: 100px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         
         .countdown-number {
             font-size: 2.5rem;
             font-weight: bold;
-            color: #d63384;
+            margin-bottom: 5px;
         }
         
         .countdown-label {
             font-size: 1rem;
-            color: #5a3e36;
-        }
-        
-        /* 祝福语样式 */
-        .wishes {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 40px;
-            margin: 40px 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            text-align: center;
-        }
-        
-        .wishes h2 {
-            color: #d63384;
-            margin-bottom: 20px;
-            font-size: 2.5rem;
-        }
-        
-        .wishes p {
-            font-size: 1.2rem;
-            line-height: 1.8;
-            margin-bottom: 15px;
         }
         
         /* 照片墙样式 */
         .photo-wall {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            color: #e91e63;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .photos {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 15px;
-            margin: 40px 0;
+            gap: 20px;
+            margin-top: 20px;
         }
         
         .photo-item {
@@ -185,106 +120,212 @@
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
+            background: #ffebee;
             height: 250px;
-            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 1.2rem;
         }
         
         .photo-item:hover {
-            transform: translateY(-10px);
+            transform: scale(1.05);
         }
         
-        /* 留言区样式 */
-        .messages {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 15px;
-            padding: 40px;
-            margin: 40px 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-        
-        .messages h2 {
-            color: #d63384;
-            margin-bottom: 20px;
+        .photo-placeholder {
+            font-size: 1.2rem;
+            color: #e91e63;
             text-align: center;
-            font-size: 2.5rem;
+            padding: 20px;
         }
         
-        .message-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+        /* 祝福区域样式 */
+        .wishes {
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 30px 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .wish-form {
             max-width: 600px;
             margin: 0 auto;
         }
         
         .form-group {
-            display: flex;
-            flex-direction: column;
+            margin-bottom: 20px;
         }
         
-        .form-group label {
-            margin-bottom: 5px;
+        label {
+            display: block;
+            margin-bottom: 8px;
             font-weight: bold;
-            color: #5a3e36;
+            color: #e91e63;
         }
         
-        .form-group input,
-        .form-group textarea {
+        input, textarea {
+            width: 100%;
             padding: 12px;
-            border: 2px solid #fad0c4;
+            border: 2px solid #ffcdd2;
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s;
         }
         
-        .form-group input:focus,
-        .form-group textarea:focus {
-            border-color: #d63384;
+        input:focus, textarea:focus {
+            border-color: #e91e63;
             outline: none;
         }
         
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
         .submit-btn {
-            background: linear-gradient(135deg, #d63384, #ff6b6b);
+            background: linear-gradient(135deg, #e91e63, #ff5722);
             color: white;
             border: none;
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 1.2rem;
-            font-weight: bold;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: block;
+            margin: 0 auto;
         }
         
         .submit-btn:hover {
             transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.4);
+        }
+        
+        .wishes-display {
+            margin-top: 40px;
+        }
+        
+        .wish-item {
+            background: #ffebee;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 5px solid #e91e63;
+        }
+        
+        .wish-author {
+            font-weight: bold;
+            color: #e91e63;
+            margin-bottom: 5px;
         }
         
         /* 页脚样式 */
         footer {
             text-align: center;
-            padding: 30px;
+            padding: 20px;
             margin-top: 40px;
-            color: #5a3e36;
-            font-size: 1.1rem;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        
+        /* 气球动画 */
+        .balloons {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .balloon {
+            position: absolute;
+            bottom: -100px;
+            width: 40px;
+            height: 50px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            animation: float 15s infinite ease-in;
+        }
+        
+        .balloon:before {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 30px;
+            background: #ff6b6b;
+        }
+        
+        .balloon:nth-child(2) {
+            left: 10%;
+            background: #4ecdc4;
+            animation-delay: 1s;
+            animation-duration: 12s;
+        }
+        
+        .balloon:nth-child(3) {
+            left: 20%;
+            background: #ffd166;
+            animation-delay: 3s;
+            animation-duration: 18s;
+        }
+        
+        .balloon:nth-child(4) {
+            left: 30%;
+            background: #06d6a0;
+            animation-delay: 5s;
+            animation-duration: 14s;
+        }
+        
+        .balloon:nth-child(5) {
+            left: 40%;
+            background: #118ab2;
+            animation-delay: 7s;
+            animation-duration: 16s;
+        }
+        
+        .balloon:nth-child(6) {
+            left: 60%;
+            background: #ef476f;
+            animation-delay: 2s;
+            animation-duration: 13s;
+        }
+        
+        .balloon:nth-child(7) {
+            left: 80%;
+            background: #ff9e00;
+            animation-delay: 4s;
+            animation-duration: 17s;
+        }
+        
+        @keyframes float {
+            0% {
+                transform: translateY(0) rotate(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-1000px) rotate(360deg);
+                opacity: 0;
+            }
         }
         
         /* 响应式设计 */
         @media (max-width: 768px) {
-            .birthday-title {
+            h1 {
                 font-size: 2.5rem;
             }
             
-            .birthday-subtitle {
-                font-size: 1.4rem;
+            .countdown-container {
+                gap: 10px;
             }
             
             .countdown-item {
-                min-width: 70px;
+                min-width: 80px;
+                padding: 10px;
             }
             
             .countdown-number {
@@ -294,23 +335,27 @@
     </style>
 </head>
 <body>
-    <!-- 气球背景 -->
-    <div class="balloon"></div>
-    <div class="balloon"></div>
-    <div class="balloon"></div>
-    <div class="balloon"></div>
-    <div class="balloon"></div>
-    <div class="balloon"></div>
-    <div class="balloon"></div>
+    <!-- 气球动画 -->
+    <div class="balloons">
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+        <div class="balloon"></div>
+    </div>
     
     <div class="container">
-        <!-- 头部 -->
         <header>
-            <h1 class="birthday-title">生日快乐，王睿琪！</h1>
-            <p class="birthday-subtitle">2025年10月29日 · 特别为你庆祝</p>
-            
-            <!-- 倒计时 -->
-            <div class="countdown">
+            <h1>王睿琪16岁生日快乐！</h1>
+            <p class="subtitle">成长不期而遇，生日如期而至</p>
+            <p>愿你的十六岁充满欢笑、惊喜和美好的回忆</p>
+        </header>
+        
+        <section class="countdown">
+            <h2 class="countdown-title">距离生日还有</h2>
+            <div class="countdown-container">
                 <div class="countdown-item">
                     <div class="countdown-number" id="days">0</div>
                     <div class="countdown-label">天</div>
@@ -328,49 +373,50 @@
                     <div class="countdown-label">秒</div>
                 </div>
             </div>
-        </header>
-        
-        <!-- 祝福语 -->
-        <section class="wishes">
-            <h2>生日祝福</h2>
-            <p>亲爱的王睿琪，</p>
-            <p>在这个特别的日子里，我们想对你说：生日快乐！</p>
-            <p>愿你的每一天都充满阳光和欢笑，愿你的每一个梦想都能实现。</p>
-            <p>希望新的一岁带给你更多快乐、更多成就和更多美好的回忆。</p>
-            <p>愿你的生活像这生日蛋糕一样甜蜜，像这生日气球一样充满色彩！</p>
-            <p>祝你生日快乐，万事如意！</p>
         </section>
         
-        <!-- 照片墙 -->
         <section class="photo-wall">
-            <div class="photo-item">🎂 生日蛋糕</div>
-            <div class="photo-item">🎁 生日礼物</div>
-            <div class="photo-item">🎈 生日气球</div>
-            <div class="photo-item">✨ 生日派对</div>
-            <div class="photo-item">🥳 庆祝时刻</div>
-            <div class="photo-item">❤️ 美好回忆</div>
+            <h2 class="section-title">美好回忆</h2>
+            <p>这里可以展示王睿琪的成长照片和美好瞬间</p>
+            <div class="photos">
+                <div class="photo-item">
+                    <div class="photo-placeholder">🎂 生日照片 🎂</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder">📸 生活瞬间 📸</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder">✨ 精彩时刻 ✨</div>
+                </div>
+                <div class="photo-item">
+                    <div class="photo-placeholder">🎉 欢乐时光 🎉</div>
+                </div>
+            </div>
         </section>
         
-        <!-- 留言区 -->
-        <section class="messages">
-            <h2>送上你的祝福</h2>
-            <form class="message-form" id="messageForm">
+        <section class="wishes">
+            <h2 class="section-title">送上你的祝福</h2>
+            <form class="wish-form" id="wishForm">
                 <div class="form-group">
                     <label for="name">你的名字</label>
-                    <input type="text" id="name" required>
+                    <input type="text" id="name" placeholder="请输入你的名字" required>
                 </div>
                 <div class="form-group">
                     <label for="message">祝福语</label>
-                    <textarea id="message" rows="5" required></textarea>
+                    <textarea id="message" placeholder="写下你对王睿琪的生日祝福..." required></textarea>
                 </div>
-                <button type="submit" class="submit-btn">发送祝福</button>
+                <button type="submit" class="submit-btn">送出祝福</button>
             </form>
+            
+            <div class="wishes-display" id="wishesDisplay">
+                <h3 class="section-title">收到的祝福</h3>
+                <!-- 祝福将动态添加到这里 -->
+            </div>
         </section>
         
-        <!-- 页脚 -->
         <footer>
-            <p>特别为亲爱的王睿琪制作 · 2025年10月29日</p>
-            <p>愿你的生日充满欢乐和美好的回忆！</p>
+            <p>特别为你准备的生日网页 | 2025年10月29日</p>
+            <p>愿你的十六岁如夏花般绚烂，如星辰般璀璨！</p>
         </footer>
     </div>
 
@@ -382,6 +428,7 @@
             const diff = birthday - now;
             
             if (diff <= 0) {
+                document.querySelector('.countdown-title').textContent = '生日快乐！';
                 document.getElementById('days').textContent = '0';
                 document.getElementById('hours').textContent = '0';
                 document.getElementById('minutes').textContent = '0';
@@ -400,30 +447,55 @@
             document.getElementById('seconds').textContent = seconds;
         }
         
-        // 初始调用并设置定时器
+        // 初始化倒计时
         updateCountdown();
         setInterval(updateCountdown, 1000);
         
-        // 表单提交处理
-        document.getElementById('messageForm').addEventListener('submit', function(e) {
+        // 祝福表单处理
+        document.getElementById('wishForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const name = document.getElementById('name').value;
             const message = document.getElementById('message').value;
             
             if (name && message) {
-                alert(`谢谢 ${name} 的祝福！\n你的留言："${message}"\n\n虽然这只是演示，但在真实场景中，这条祝福会被记录下来并发送给王睿琪！`);
-                document.getElementById('messageForm').reset();
+                // 创建新的祝福元素
+                const wishItem = document.createElement('div');
+                wishItem.className = 'wish-item';
+                wishItem.innerHTML = `
+                    <div class="wish-author">${name}</div>
+                    <div class="wish-text">${message}</div>
+                `;
+                
+                // 添加到祝福展示区
+                document.getElementById('wishesDisplay').appendChild(wishItem);
+                
+                // 清空表单
+                document.getElementById('name').value = '';
+                document.getElementById('message').value = '';
+                
+                // 显示成功消息
+                alert('祝福已送出！感谢你的祝福！');
             }
         });
         
-        // 添加一些交互效果
-        document.querySelectorAll('.photo-item').forEach(item => {
-            item.addEventListener('click', function() {
-                this.style.transform = 'scale(0.95)';
-                setTimeout(() => {
-                    this.style.transform = '';
-                }, 300);
+        // 添加一些示例祝福
+        const exampleWishes = [
+            { name: "你的好朋友", message: "祝王睿琪16岁生日快乐！愿你的每一天都充满阳光和欢笑！" },
+            { name: "同学", message: "十六岁是人生美好的开始，愿你的未来如星辰大海般璀璨！" },
+            { name: "家人", message: "成长不期而遇，生日如期而至。愿你的十六岁充满惊喜和美好！" }
+        ];
+        
+        // 初始化示例祝福
+        window.addEventListener('DOMContentLoaded', function() {
+            exampleWishes.forEach(wish => {
+                const wishItem = document.createElement('div');
+                wishItem.className = 'wish-item';
+                wishItem.innerHTML = `
+                    <div class="wish-author">${wish.name}</div>
+                    <div class="wish-text">${wish.message}</div>
+                `;
+                document.getElementById('wishesDisplay').appendChild(wishItem);
             });
         });
     </script>
