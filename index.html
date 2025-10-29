@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>王睿琪16岁生日快乐！</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Arial Rounded MT Bold', 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
@@ -25,15 +26,16 @@
         }
         
         .container {
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
             text-align: center;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
             padding: 3rem;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
             position: relative;
             overflow: hidden;
+            z-index: 1;
         }
         
         h1 {
@@ -43,9 +45,16 @@
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
         }
         
+        .name {
+            font-size: 2.5rem;
+            color: #6c5ce7;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        
         .age {
             font-size: 2rem;
-            color: #6c5ce7;
+            color: #e84393;
             margin-bottom: 2rem;
             font-weight: bold;
         }
@@ -57,10 +66,15 @@
             color: #2d3436;
         }
         
+        .cake-container {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+        
         .cake {
             width: 200px;
             height: 120px;
-            margin: 2rem auto;
             position: relative;
         }
         
@@ -239,6 +253,7 @@
             margin-top: 2rem;
             font-style: italic;
             color: #636e72;
+            line-height: 1.8;
         }
         
         .confetti {
@@ -248,6 +263,7 @@
             background: #f00;
             border-radius: 50%;
             animation: confetti-fall 5s linear infinite;
+            z-index: 0;
         }
         
         @keyframes confetti-fall {
@@ -261,8 +277,51 @@
             font-size: 0.9rem;
         }
         
+        .gift-box {
+            width: 100px;
+            height: 100px;
+            margin: 1rem auto;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .box {
+            width: 100px;
+            height: 60px;
+            background: #e84393;
+            position: absolute;
+            bottom: 0;
+            border-radius: 5px;
+        }
+        
+        .lid {
+            width: 110px;
+            height: 20px;
+            background: #fd79a8;
+            position: absolute;
+            top: 0;
+            left: -5px;
+            border-radius: 5px;
+            transition: transform 0.5s;
+        }
+        
+        .gift-box:hover .lid {
+            transform: rotate(-15deg) translate(-10px, -10px);
+        }
+        
+        .ribbon {
+            width: 20px;
+            height: 100px;
+            background: #fdcb6e;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+        
         @media (max-width: 768px) {
             h1 { font-size: 2.5rem; }
+            .name { font-size: 2rem; }
             .age { font-size: 1.5rem; }
             .birthday-message { font-size: 1.2rem; }
             .container { padding: 2rem; }
@@ -271,7 +330,8 @@
 </head>
 <body>
     <div class="container">
-        <h1>生日快乐，王睿琪！</h1>
+        <h1>生日快乐！</h1>
+        <div class="name">王睿琪</div>
         <div class="age">16岁啦！</div>
         
         <div class="birthday-message">
@@ -279,12 +339,14 @@
             愿你的新一岁充满欢笑、成长和美好的回忆！
         </div>
         
-        <div class="cake">
-            <div class="cake-base"></div>
-            <div class="cake-middle"></div>
-            <div class="cake-top"></div>
-            <div class="candle"></div>
-            <div class="flame"></div>
+        <div class="cake-container">
+            <div class="cake">
+                <div class="cake-base"></div>
+                <div class="cake-middle"></div>
+                <div class="cake-top"></div>
+                <div class="candle"></div>
+                <div class="flame"></div>
+            </div>
         </div>
         
         <div class="balloons">
@@ -296,11 +358,10 @@
         
         <div class="music-player">
             <button class="music-btn" id="playBtn">
-                <i>🎵</i> 播放生日快乐歌
+                <i class="fas fa-music"></i> 播放生日快乐歌
             </button>
             <audio id="birthdaySong" loop>
-                <source src="https://assets.mixkit.co/music/preview/mixkit-happy-birthday-to-you-443.mp3" type="audio/mpeg">
-                您的浏览器不支持音频元素。
+                <!-- 使用简单的音调模拟生日快乐歌 -->
             </audio>
         </div>
         
@@ -322,8 +383,15 @@
             </div>
         </div>
         
+        <div class="gift-box">
+            <div class="box"></div>
+            <div class="lid"></div>
+            <div class="ribbon"></div>
+        </div>
+        
         <div class="wishes">
             <p>愿你的16岁充满阳光、欢笑和无限可能！</p>
+            <p>愿每一天都像今天一样特别，愿你的梦想都能实现！</p>
             <p>—— 来自你的好朋友</p>
         </div>
     </div>
@@ -338,13 +406,81 @@
         const birthdaySong = document.getElementById('birthdaySong');
         let isPlaying = false;
         
+        // 创建简单的生日快乐歌音频
+        function createBirthdaySong() {
+            // 这里使用Web Audio API创建一个简单的生日快乐歌
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            let currentTime = audioContext.currentTime;
+            
+            // 生日快乐歌的音符序列 (简谱: 5 5 6 5 1 7 - 5 5 6 5 2 1 - ...)
+            const melody = [
+                {note: 523.25, duration: 0.5}, // C5
+                {note: 523.25, duration: 0.5}, // C5
+                {note: 587.33, duration: 0.5}, // D5
+                {note: 523.25, duration: 0.5}, // C5
+                {note: 698.46, duration: 0.5}, // F5
+                {note: 659.25, duration: 1.0}, // E5
+                
+                {note: 523.25, duration: 0.5}, // C5
+                {note: 523.25, duration: 0.5}, // C5
+                {note: 587.33, duration: 0.5}, // D5
+                {note: 523.25, duration: 0.5}, // C5
+                {note: 783.99, duration: 0.5}, // G5
+                {note: 698.46, duration: 1.0}, // F5
+                
+                {note: 523.25, duration: 0.5}, // C5
+                {note: 523.25, duration: 0.5}, // C5
+                {note: 1046.50, duration: 0.5}, // C6
+                {note: 880.00, duration: 0.5}, // A5
+                {note: 698.46, duration: 0.5}, // F5
+                {note: 659.25, duration: 0.5}, // E5
+                {note: 587.33, duration: 1.0}, // D5
+                
+                {note: 987.77, duration: 0.5}, // B5
+                {note: 987.77, duration: 0.5}, // B5
+                {note: 880.00, duration: 0.5}, // A5
+                {note: 698.46, duration: 0.5}, // F5
+                {note: 783.99, duration: 0.5}, // G5
+                {note: 698.46, duration: 1.0}, // F5
+            ];
+            
+            // 播放每个音符
+            melody.forEach(tone => {
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = tone.note;
+                oscillator.type = 'sine';
+                
+                // 音量包络
+                gainNode.gain.setValueAtTime(0, currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, currentTime + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, currentTime + tone.duration);
+                
+                oscillator.start(currentTime);
+                oscillator.stop(currentTime + tone.duration);
+                
+                currentTime += tone.duration;
+            });
+            
+            return audioContext;
+        }
+        
+        let audioContext = null;
+        
         playBtn.addEventListener('click', function() {
             if (isPlaying) {
-                birthdaySong.pause();
-                playBtn.innerHTML = '<i>🎵</i> 播放生日快乐歌';
+                if (audioContext) {
+                    audioContext.close();
+                    audioContext = null;
+                }
+                playBtn.innerHTML = '<i class="fas fa-music"></i> 播放生日快乐歌';
             } else {
-                birthdaySong.play();
-                playBtn.innerHTML = '<i>⏸️</i> 暂停音乐';
+                audioContext = createBirthdaySong();
+                playBtn.innerHTML = '<i class="fas fa-pause"></i> 暂停音乐';
                 createConfetti();
             }
             isPlaying = !isPlaying;
@@ -353,7 +489,7 @@
         // 创建五彩纸屑效果
         function createConfetti() {
             const colors = ['#e84393', '#6c5ce7', '#00cec9', '#fdcb6e', '#fd79a8'];
-            const container = document.querySelector('.container');
+            const container = document.querySelector('body');
             
             for (let i = 0; i < 50; i++) {
                 const confetti = document.createElement('div');
@@ -367,22 +503,29 @@
                 
                 // 5秒后移除纸屑
                 setTimeout(() => {
-                    confetti.remove();
+                    if (confetti.parentNode) {
+                        confetti.parentNode.removeChild(confetti);
+                    }
                 }, 5000);
             }
         }
         
-        // 生日倒计时
+        // 修复生日倒计时
         function updateCountdown() {
             const now = new Date();
-            const birthday = new Date(2025, 10, 29); // 月份从0开始，所以10月是9
+            // 设置生日结束时间为2025年10月29日23:59:59
+            const birthdayEnd = new Date(2025, 9, 29, 23, 59, 59); // 月份从0开始，所以10月是9
             
-            // 如果生日已经过了，计算下一个生日
-            if (now > birthday) {
-                birthday.setFullYear(birthday.getFullYear() + 1);
+            // 计算剩余时间（毫秒）
+            const diff = birthdayEnd - now;
+            
+            if (diff <= 0) {
+                // 如果生日已经结束
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                return;
             }
-            
-            const diff = birthday - now;
             
             // 计算剩余时间
             const hours = Math.floor(diff / (1000 * 60 * 60));
