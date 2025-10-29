@@ -3,604 +3,428 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>英语俱乐部by罗子翔</title>
+    <title>生日快乐，王睿琪！</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎂</text></svg>">
     <style>
-        /* 基础样式重置 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
         }
         
         body {
-            background-color: #f5f7fa;
-            color: #333;
+            background: linear-gradient(135deg, #ff9a9e 0%, #fad0c4 100%);
+            color: #5a3e36;
             line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
         }
         
-        /* 导航栏样式 */
-        .navbar {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            padding: 1rem 0;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        /* 气球动画 */
+        .balloon {
+            position: absolute;
+            width: 40px;
+            height: 50px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+            z-index: -1;
         }
         
-        .nav-container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .balloon:before {
+            content: "";
+            position: absolute;
+            width: 2px;
+            height: 40px;
+            background: #ff6b6b;
+            top: 50px;
+            left: 19px;
         }
         
-        .logo {
-            color: white;
-            font-size: 1.8rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
+        .balloon:nth-child(2) {
+            left: 10%;
+            background: #ffd166;
+            animation-delay: 2s;
         }
         
-        .logo i {
-            margin-right: 10px;
-            font-size: 2rem;
+        .balloon:nth-child(3) {
+            left: 20%;
+            background: #06d6a0;
+            animation-delay: 4s;
         }
         
-        .nav-links {
-            display: flex;
-            list-style: none;
-            align-items: center;
+        .balloon:nth-child(4) {
+            left: 30%;
+            background: #118ab2;
+            animation-delay: 6s;
         }
         
-        .nav-links li {
-            margin-left: 2rem;
+        .balloon:nth-child(5) {
+            left: 40%;
+            background: #ef476f;
+            animation-delay: 8s;
         }
         
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: color 0.3s;
+        .balloon:nth-child(6) {
+            left: 60%;
+            background: #ffd166;
+            animation-delay: 10s;
         }
         
-        .nav-links a:hover {
-            color: #ffd166;
+        .balloon:nth-child(7) {
+            left: 80%;
+            background: #06d6a0;
+            animation-delay: 12s;
         }
         
-        /* 语言切换按钮 */
-        .lang-switch {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            font-weight: 500;
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) rotate(0);
+            }
+            50% {
+                transform: translateY(-20px) rotate(5deg);
+            }
         }
         
-        .lang-switch:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-        
-        /* 英雄区域样式 */
-        .hero {
-            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), 
-                        url('https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
-            background-size: cover;
-            background-position: center;
-            height: 80vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            color: white;
-            padding: 0 1rem;
-        }
-        
-        .hero-content {
-            max-width: 800px;
-        }
-        
-        .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1.5rem;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-        
-        .hero p {
-            font-size: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .cta-button {
-            display: inline-block;
-            background-color: #ffd166;
-            color: #333;
-            padding: 0.8rem 2rem;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.2rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-        
-        .cta-button:hover {
-            background-color: #ffb700;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-        }
-        
-        /* 关于俱乐部区域样式 */
-        .about {
-            padding: 5rem 1rem;
-            background-color: white;
-        }
-        
+        /* 容器样式 */
         .container {
-            width: 90%;
             max-width: 1200px;
             margin: 0 auto;
+            padding: 20px;
         }
         
-        .section-title {
+        /* 头部样式 */
+        header {
             text-align: center;
-            margin-bottom: 3rem;
-            color: #2a5298;
-            font-size: 2.5rem;
+            padding: 60px 20px;
+            position: relative;
         }
         
-        .about-content {
+        .birthday-title {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #d63384;
+            text-shadow: 3px 3px 0 rgba(255, 215, 0, 0.5);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .birthday-subtitle {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #5a3e36;
+        }
+        
+        /* 倒计时样式 */
+        .countdown {
             display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
             flex-wrap: wrap;
-            gap: 2rem;
-            align-items: center;
         }
         
-        .about-text {
-            flex: 1;
-            min-width: 300px;
-        }
-        
-        .about-image {
-            flex: 1;
-            min-width: 300px;
+        .countdown-item {
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 10px;
-            overflow: hidden;
+            padding: 15px;
+            min-width: 100px;
+            text-align: center;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
         
-        .about-image img {
-            width: 100%;
-            height: auto;
-            display: block;
-            transition: transform 0.5s ease;
+        .countdown-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #d63384;
         }
         
-        .about-image:hover img {
-            transform: scale(1.05);
+        .countdown-label {
+            font-size: 1rem;
+            color: #5a3e36;
         }
         
-        /* 活动区域样式 */
-        .activities {
-            padding: 5rem 1rem;
-            background-color: #f5f7fa;
+        /* 祝福语样式 */
+        .wishes {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
         
-        .activities-grid {
+        .wishes h2 {
+            color: #d63384;
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+        
+        .wishes p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+        
+        /* 照片墙样式 */
+        .photo-wall {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 40px 0;
         }
         
-        .activity-card {
-            background-color: white;
+        .photo-item {
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
+            height: 250px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
         }
         
-        .activity-card:hover {
+        .photo-item:hover {
             transform: translateY(-10px);
         }
         
-        .activity-image {
-            height: 200px;
-            overflow: hidden;
+        /* 留言区样式 */
+        .messages {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
         
-        .activity-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-        
-        .activity-card:hover .activity-image img {
-            transform: scale(1.1);
-        }
-        
-        .activity-content {
-            padding: 1.5rem;
-        }
-        
-        .activity-title {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: #2a5298;
-        }
-        
-        /* 加入我们区域样式 */
-        .join {
-            padding: 5rem 1rem;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: white;
+        .messages h2 {
+            color: #d63384;
+            margin-bottom: 20px;
             text-align: center;
+            font-size: 2.5rem;
         }
         
-        .join .section-title {
-            color: white;
-        }
-        
-        .join-form {
+        .message-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
             max-width: 600px;
             margin: 0 auto;
         }
         
         .form-group {
-            margin-bottom: 1.5rem;
-            text-align: left;
+            display: flex;
+            flex-direction: column;
         }
         
         .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: 500;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #5a3e36;
         }
         
         .form-group input,
         .form-group textarea {
-            width: 100%;
-            padding: 0.8rem;
-            border: none;
-            border-radius: 5px;
+            padding: 12px;
+            border: 2px solid #fad0c4;
+            border-radius: 8px;
             font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus,
+        .form-group textarea:focus {
+            border-color: #d63384;
+            outline: none;
         }
         
         .submit-btn {
-            background-color: #ffd166;
-            color: #333;
+            background: linear-gradient(135deg, #d63384, #ff6b6b);
+            color: white;
             border: none;
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            font-size: 1.1rem;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 1.2rem;
             font-weight: bold;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: transform 0.3s;
         }
         
         .submit-btn:hover {
-            background-color: #ffb700;
             transform: translateY(-3px);
         }
         
         /* 页脚样式 */
-        .footer {
-            background-color: #1a1a2e;
-            color: white;
-            padding: 3rem 1rem;
+        footer {
             text-align: center;
-        }
-        
-        .footer-content {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            max-width: 1200px;
-            margin: 0 auto;
-            gap: 2rem;
-        }
-        
-        .footer-section {
-            flex: 1;
-            min-width: 250px;
-        }
-        
-        .footer-section h3 {
-            margin-bottom: 1.5rem;
-            color: #ffd166;
-        }
-        
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .social-link {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            background-color: #333;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-decoration: none;
-            transition: background-color 0.3s;
-        }
-        
-        .social-link:hover {
-            background-color: #ffd166;
-            color: #333;
-        }
-        
-        .copyright {
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            margin-top: 40px;
+            color: #5a3e36;
+            font-size: 1.1rem;
         }
         
         /* 响应式设计 */
         @media (max-width: 768px) {
-            .nav-container {
-                flex-direction: column;
-            }
-            
-            .nav-links {
-                margin-top: 1rem;
-            }
-            
-            .nav-links li {
-                margin-left: 1rem;
-                margin-right: 1rem;
-            }
-            
-            .hero h1 {
+            .birthday-title {
                 font-size: 2.5rem;
             }
             
-            .hero p {
-                font-size: 1.2rem;
+            .birthday-subtitle {
+                font-size: 1.4rem;
+            }
+            
+            .countdown-item {
+                min-width: 70px;
+            }
+            
+            .countdown-number {
+                font-size: 1.8rem;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 导航栏 -->
-    <nav class="navbar">
-        <div class="nav-container">
-            <div class="logo">
-                <span data-en="English Club" data-zh="英语俱乐部">English Club</span>
-            </div>
-            <ul class="nav-links">
-                <li><a href="#home" data-en="Home" data-zh="首页">Home</a></li>
-                <li><a href="#about" data-en="About Us" data-zh="关于我们">About Us</a></li>
-                <li><a href="#activities" data-en="Activities" data-zh="活动">Activities</a></li>
-                <li><a href="#join" data-en="Join Us" data-zh="加入我们">Join Us</a></li>
-                <li><button class="lang-switch" id="langSwitch">中文</button></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- 英雄区域 -->
-    <section class="hero" id="home">
-        <div class="hero-content">
-            <h1 data-en="Welcome to English Club" data-zh="欢迎加入英语俱乐部">Welcome to English Club</h1>
-            <p data-en="Improve your English, make new friends, explore diverse cultures" data-zh="提高英语水平，结交新朋友，探索多元文化">Improve your English, make new friends, explore diverse cultures</p>
-            <a href="#join" class="cta-button" data-en="Join Now" data-zh="立即加入">Join Now</a>
-        </div>
-    </section>
-
-    <!-- 关于俱乐部 -->
-    <section class="about" id="about">
-        <div class="container">
-            <h2 class="section-title" data-en="About English Club" data-zh="关于英语俱乐部">About English Club</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p data-en="The English Club is a platform for students to learn and communicate in English. We are committed to creating a relaxed and enjoyable learning environment to help members improve their English speaking skills, learn about different cultures, and make like-minded friends." data-zh="英语俱乐部是一个为学生提供英语学习和交流的平台。我们致力于创造轻松愉快的学习环境，帮助成员提高英语口语能力，了解不同文化，结交志同道合的朋友。">The English Club is a platform for students to learn and communicate in English. We are committed to creating a relaxed and enjoyable learning environment to help members improve their English speaking skills, learn about different cultures, and make like-minded friends.</p>
-                    <p data-en="Whether you are a beginner or an advanced English learner, you are welcome to join our big family. Our activities are diverse, including themed discussions, movie nights, interactive games, and cultural sharing." data-zh="无论你是英语初学者还是高级学习者，我们都欢迎你加入我们的大家庭。我们的活动形式多样，包括主题讨论、电影之夜、游戏互动和文化分享等。">Whether you are a beginner or an advanced English learner, you are welcome to join our big family. Our activities are diverse, including themed discussions, movie nights, interactive games, and cultural sharing.</p>
-                    <p data-en="We believe that learning a language is not just about mastering vocabulary and grammar, but also about opening a window to the world. Join us and start an amazing English journey together!" data-zh="我们相信，学习一门语言不仅仅是掌握词汇和语法，更是打开一扇通往世界的窗户。加入我们，一起开启精彩的英语之旅！">We believe that learning a language is not just about mastering vocabulary and grammar, but also about opening a window to the world. Join us and start an amazing English journey together!</p>
+    <!-- 气球背景 -->
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    <div class="balloon"></div>
+    
+    <div class="container">
+        <!-- 头部 -->
+        <header>
+            <h1 class="birthday-title">生日快乐，王睿琪！</h1>
+            <p class="birthday-subtitle">2025年10月29日 · 特别为你庆祝</p>
+            
+            <!-- 倒计时 -->
+            <div class="countdown">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="days">0</div>
+                    <div class="countdown-label">天</div>
                 </div>
-                <div class="about-image">
-                    <img src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="英语俱乐部活动">
+                <div class="countdown-item">
+                    <div class="countdown-number" id="hours">0</div>
+                    <div class="countdown-label">小时</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="minutes">0</div>
+                    <div class="countdown-label">分钟</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-number" id="seconds">0</div>
+                    <div class="countdown-label">秒</div>
                 </div>
             </div>
-        </div>
-    </section>
-
-    <!-- 活动区域 -->
-    <section class="activities" id="activities">
-        <div class="container">
-            <h2 class="section-title" data-en="Our Activities" data-zh="我们的活动">Our Activities</h2>
-            <div class="activities-grid">
-                <div class="activity-card">
-                    <div class="activity-image">
-                        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="英语角活动">
-                    </div>
-                    <div class="activity-content">
-                        <h3 class="activity-title" data-en="English Corner" data-zh="英语角">English Corner</h3>
-                        <p data-en="Weekly English corner activities provide a platform for free communication, covering topics from daily life, cultural differences to current affairs." data-zh="每周一次的英语角活动，提供自由交流的平台，主题涵盖日常生活、文化差异和时事热点。">Weekly English corner activities provide a platform for free communication, covering topics from daily life, cultural differences to current affairs.</p>
-                    </div>
-                </div>
-                <div class="activity-card">
-                    <div class="activity-image">
-                        <img src="https://youke1.picui.cn/s1/2025/10/04/68e0e9898f8c3.png" alt="电影之夜">
-                    </div>
-                    <div class="activity-content">
-                        <h3 class="activity-title" data-en="Movie Night" data-zh="电影之夜">Movie Night</h3>
-                        <p data-en="Monthly movie nights where we watch classic English films and discuss them to improve listening and comprehension skills. (Note: Couldn't find a suitable image for this, so here's Xiao Zi)" data-zh="每月一次的电影之夜，观看经典英语电影并进行讨论，提高听力和理解能力。（注：这里的图片没有找到合适的，所以看看小梓吧）">Monthly movie nights where we watch classic English films and discuss them to improve listening and comprehension skills. （注：这里的图片没有找到合适的，所以看看小梓吧）</p>
-                    </div>
-                </div>
-                <div class="activity-card">
-                    <div class="activity-image">
-                        <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="文化分享会">
-                    </div>
-                    <div class="activity-content">
-                        <h3 class="activity-title" data-en="Cultural Sharing" data-zh="文化分享会">Cultural Sharing</h3>
-                        <p data-en="Invite friends from different countries to share their cultures, broaden international perspectives, and enhance cross-cultural understanding." data-zh="邀请来自不同国家的朋友分享他们的文化，拓宽国际视野，增进跨文化理解。">Invite friends from different countries to share their cultures, broaden international perspectives, and enhance cross-cultural understanding.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- 加入我们 -->
-    <section class="join" id="join">
-        <div class="container">
-            <h2 class="section-title" data-en="Join Us" data-zh="加入我们">Join Us</h2>
-            <p data-en="Fill out the form below to become a member of the English Club" data-zh="填写以下表格，成为英语俱乐部的一员">Fill out the form below to become a member of the English Club</p>
-            <form class="join-form">
+        </header>
+        
+        <!-- 祝福语 -->
+        <section class="wishes">
+            <h2>生日祝福</h2>
+            <p>亲爱的王睿琪，</p>
+            <p>在这个特别的日子里，我们想对你说：生日快乐！</p>
+            <p>愿你的每一天都充满阳光和欢笑，愿你的每一个梦想都能实现。</p>
+            <p>希望新的一岁带给你更多快乐、更多成就和更多美好的回忆。</p>
+            <p>愿你的生活像这生日蛋糕一样甜蜜，像这生日气球一样充满色彩！</p>
+            <p>祝你生日快乐，万事如意！</p>
+        </section>
+        
+        <!-- 照片墙 -->
+        <section class="photo-wall">
+            <div class="photo-item">🎂 生日蛋糕</div>
+            <div class="photo-item">🎁 生日礼物</div>
+            <div class="photo-item">🎈 生日气球</div>
+            <div class="photo-item">✨ 生日派对</div>
+            <div class="photo-item">🥳 庆祝时刻</div>
+            <div class="photo-item">❤️ 美好回忆</div>
+        </section>
+        
+        <!-- 留言区 -->
+        <section class="messages">
+            <h2>送上你的祝福</h2>
+            <form class="message-form" id="messageForm">
                 <div class="form-group">
-                    <label for="name" data-en="Name" data-zh="姓名">Name</label>
+                    <label for="name">你的名字</label>
                     <input type="text" id="name" required>
                 </div>
                 <div class="form-group">
-                    <label for="email" data-en="Email" data-zh="电子邮箱">Email</label>
-                    <input type="email" id="email" required>
+                    <label for="message">祝福语</label>
+                    <textarea id="message" rows="5" required></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="message" data-en="Message (Optional)" data-zh="留言 (可选)">Message (Optional)</label>
-                    <textarea id="message" rows="4"></textarea>
-                </div>
-                <button type="submit" class="submit-btn" data-en="Submit Application" data-zh="提交申请">Submit Application</button>
+                <button type="submit" class="submit-btn">发送祝福</button>
             </form>
-        </div>
-    </section>
-
-    <!-- 页脚 -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3 data-en="Contact Us" data-zh="联系我们">Contact Us</h3>
-                <p data-en="Email: luow01644@gmail.com" data-zh="邮箱: luow01644@gmail.com">Email: luow01644@gmail.com</p>
-                <p data-en="Phone: +86 19176850506" data-zh="电话: +86 19176850506">Phone: +86 19176850506</p>
-            </div>
-            <div class="footer-section">
-                <h3 data-en="Location" data-zh="活动地点">Location</h3>
-                <p data-en="Classroom 731, 4th Floor, Building 3, Qiyang No.4 High School" data-zh="祁阳四中三栋4楼 731教室">Classroom 731, 4th Floor, Building 3, Qiyang No.4 High School</p>
-                <p data-en="Every Friday 18:00-20:00" data-zh="每周五 18:00-20:00">Every Friday 18:00-20:00</p>
-            </div>
-            <div class="footer-section">
-                <h3 data-en="Follow Us" data-zh="关注我们">Follow Us</h3>
-                <div class="social-links">
-                    <a href="https://space.bilibili.com/3493288873036028" class="social-link">B站</a>
-                    <a href="https://t.me/+2i9kbfqB7qs0ZTY1" class="social-link">TG</a>
-                    <a href="https://qm.qq.com/q/PcJARZZsY2" class="social-link">QQ</a>
-                    <a href="https://github.com/aaqaaqs/aaqaaqs.github.io" class="social-link">GitHub</a>
-                </div>
-            </div>
-        </div>
-        <div class="copyright">
-            <p data-en="&copy; 2025 English Club. All Rights Reserved." data-zh="&copy; 2025 英语俱乐部 版权所有">&copy; 2025 English Club. All Rights Reserved.</p>
-        </div>
-    </footer>
+        </section>
+        
+        <!-- 页脚 -->
+        <footer>
+            <p>特别为亲爱的王睿琪制作 · 2025年10月29日</p>
+            <p>愿你的生日充满欢乐和美好的回忆！</p>
+        </footer>
+    </div>
 
     <script>
-        // 语言切换功能
-        let currentLang = 'en'; // 默认语言为英语
-        const langSwitch = document.getElementById('langSwitch');
-        
-        // 切换语言函数
-        function switchLanguage() {
-            if (currentLang === 'en') {
-                currentLang = 'zh';
-                langSwitch.textContent = 'English';
-            } else {
-                currentLang = 'en';
-                langSwitch.textContent = '中文';
+        // 生日倒计时
+        function updateCountdown() {
+            const birthday = new Date('2025-10-29T00:00:00');
+            const now = new Date();
+            const diff = birthday - now;
+            
+            if (diff <= 0) {
+                document.getElementById('days').textContent = '0';
+                document.getElementById('hours').textContent = '0';
+                document.getElementById('minutes').textContent = '0';
+                document.getElementById('seconds').textContent = '0';
+                return;
             }
             
-            // 更新所有带有data-en和data-zh属性的元素
-            document.querySelectorAll('[data-en]').forEach(element => {
-                if (currentLang === 'en') {
-                    element.textContent = element.getAttribute('data-en');
-                } else {
-                    element.textContent = element.getAttribute('data-zh');
-                }
-            });
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = days;
+            document.getElementById('hours').textContent = hours;
+            document.getElementById('minutes').textContent = minutes;
+            document.getElementById('seconds').textContent = seconds;
         }
         
-        // 添加语言切换按钮点击事件
-        langSwitch.addEventListener('click', switchLanguage);
-        
-        // 平滑滚动导航
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                
-                const targetId = this.getAttribute('href');
-                if(targetId === '#') return;
-                
-                const targetElement = document.querySelector(targetId);
-                if(targetElement) {
-                    window.scrollTo({
-                        top: targetElement.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
+        // 初始调用并设置定时器
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
         
         // 表单提交处理
-        const joinForm = document.querySelector('.join-form');
-        joinForm.addEventListener('submit', function(e) {
+        document.getElementById('messageForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
             const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
             
-            // 根据当前语言显示不同的提示信息
-            if (currentLang === 'en') {
-                alert(`Thank you ${name} for your application! We will contact you at ${email}.`);
-            } else {
-                alert(`感谢 ${name} 的申请！我们会通过 ${email} 联系你。`);
-            }
-            
-            // 重置表单
-            joinForm.reset();
-        });
-        
-        // 导航栏滚动效果
-        window.addEventListener('scroll', function() {
-            const navbar = document.querySelector('.navbar');
-            if(window.scrollY > 100) {
-                navbar.style.backgroundColor = 'rgba(30, 60, 114, 0.95)';
-            } else {
-                navbar.style.backgroundColor = '';
+            if (name && message) {
+                alert(`谢谢 ${name} 的祝福！\n你的留言："${message}"\n\n虽然这只是演示，但在真实场景中，这条祝福会被记录下来并发送给王睿琪！`);
+                document.getElementById('messageForm').reset();
             }
         });
         
-        // 活动卡片动画
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
-        
-        const observer = new IntersectionObserver(function(entries) {
-            entries.forEach(entry => {
-                if(entry.isIntersecting) {
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
+        // 添加一些交互效果
+        document.querySelectorAll('.photo-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 300);
             });
-        }, observerOptions);
-        
-        // 为活动卡片添加初始样式和观察
-        document.querySelectorAll('.activity-card').forEach(card => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-            observer.observe(card);
         });
     </script>
 </body>
