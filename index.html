@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>班级工具站 · 点名与背诵任务导航</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f4f9ff 0%, #e2ebf3 100%);
+            min-height: 100vh;
+            font-family: system-ui, -apple-system, 'Segoe UI', 'Roboto', 'Noto Sans', 'Helvetica Neue', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.8rem 1.2rem;
+        }
+
+        /* 主容器卡片，质感轻盈 */
+        .nav-dashboard {
+            max-width: 780px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(2px);
+            border-radius: 2.5rem;
+            box-shadow: 0 25px 40px -12px rgba(0, 0, 0, 0.2), 0 2px 4px rgba(0, 0, 0, 0.02);
+            overflow: hidden;
+            transition: transform 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.7);
+        }
+
+        /* 头部区域 */
+        .hero {
+            background: linear-gradient(120deg, #ffffffcc 0%, #f1f7fecc 100%);
+            padding: 1.8rem 2rem 1rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .hero-icon {
+            font-size: 2.6rem;
+            display: inline-block;
+            filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.05));
+        }
+
+        h1 {
+            font-size: 1.9rem;
+            font-weight: 650;
+            letter-spacing: -0.3px;
+            background: linear-gradient(135deg, #1f3b4c, #2c5a7a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-top: 0.4rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .subhead {
+            color: #4a627a;
+            font-size: 0.85rem;
+            font-weight: 470;
+            border-top: 1px dashed #cbdbe6;
+            display: inline-block;
+            padding-top: 0.55rem;
+            margin-top: 0.2rem;
+        }
+
+        /* 链接网格区 — 采用优雅的垂直列表，清晰好点 */
+        .links-area {
+            padding: 1.8rem 1.8rem 2rem 1.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        /* 每一个入口卡片 (自适应宽, 圆润交互) */
+        .tool-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            border-radius: 1.8rem;
+            padding: 0.9rem 1.5rem;
+            text-decoration: none;
+            transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+            border: 1px solid #e6edf6;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+            cursor: pointer;
+        }
+
+        .tool-card:hover {
+            background: #fefefe;
+            border-color: #b7cfec;
+            box-shadow: 0 12px 20px -12px rgba(48, 80, 118, 0.18);
+            transform: translateY(-2px);
+        }
+
+        .tool-card:active {
+            transform: scale(0.99);
+            background: #f7faff;
+        }
+
+        /* 左侧文本区 */
+        .tool-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            flex: 1;
+        }
+
+        .tool-title {
+            font-size: 1.22rem;
+            font-weight: 620;
+            color: #1f3a4b;
+            letter-spacing: -0.2px;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .badge-class {
+            background: #eaf2fb;
+            font-size: 0.68rem;
+            font-weight: 500;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            color: #2c6e9e;
+            border: 0.5px solid #caddf0;
+            letter-spacing: 0;
+        }
+
+        .tool-desc {
+            font-size: 0.78rem;
+            color: #587188;
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            flex-wrap: wrap;
+        }
+
+        .tool-desc span {
+            background: #f0f4fa;
+            padding: 0.15rem 0.55rem;
+            border-radius: 30px;
+            font-family: monospace;
+            font-size: 0.7rem;
+            color: #2d5f85;
+        }
+
+        /* 右侧箭头图标 */
+        .arrow-icon {
+            font-size: 1.5rem;
+            color: #8dabca;
+            transition: transform 0.2s ease, color 0.2s;
+            margin-left: 0.8rem;
+            flex-shrink: 0;
+        }
+
+        .tool-card:hover .arrow-icon {
+            transform: translateX(5px);
+            color: #2b7aae;
+        }
+
+        /* 分隔小组提示 (视觉分组，不干扰点击) */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            margin: 0.3rem 0 0.1rem 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, #c3d6eb, transparent);
+        }
+
+        .divider-text {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: #6b86a2;
+            background: #eef3fc;
+            padding: 0.1rem 0.9rem;
+            border-radius: 30px;
+            letter-spacing: 0.3px;
+        }
+
+        /* 页脚小工具链接 */
+        .footer-links {
+            background: rgba(235, 245, 255, 0.7);
+            padding: 0.9rem 1.8rem;
+            text-align: center;
+            border-top: 1px solid rgba(0, 0, 0, 0.03);
+            font-size: 0.72rem;
+            color: #5e778f;
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: #2f6d99;
+            text-decoration: none;
+            border-bottom: 1px dotted #b2cae2;
+        }
+
+        .footer-links a:hover {
+            color: #174c6e;
+            border-bottom: 1px solid #2f6d99;
+        }
+
+        /* 移动端优化 */
+        @media (max-width: 560px) {
+            body {
+                padding: 1rem;
+            }
+            .hero {
+                padding: 1.4rem 1rem 0.9rem 1rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .links-area {
+                padding: 1.2rem;
+                gap: 0.85rem;
+            }
+            .tool-card {
+                padding: 0.8rem 1rem;
+            }
+            .tool-title {
+                font-size: 1.05rem;
+                gap: 0.4rem;
+            }
+            .tool-desc {
+                font-size: 0.7rem;
+            }
+            .arrow-icon {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* 保持卡片内文字可长段换行 */
+        .tool-info {
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div class="nav-dashboard">
+    <div class="hero">
+        <div class="hero-icon">📖🎲🧑‍🏫</div>
+        <h1>班级综合工具 · 点名 & 背诵</h1>
+        <div class="subhead">727班 · 735班 · 随机抽背 | 一键直达任务</div>
+    </div>
+
+    <div class="links-area">
+        <!-- ========= 727 班级专区 ========= -->
+        <div class="section-divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">🏫 727班 · 专属工具</span>
+            <div class="divider-line"></div>
+        </div>
+
+        <!-- 原链接1: 神秘罗盘点名系统 (727.html) -->
+        <a href="https://luow.cloud-ip.cc/727.html" class="tool-card" target="_blank" rel="noopener noreferrer">
+            <div class="tool-info">
+                <div class="tool-title">
+                    🎲 神秘罗盘 · 隐藏名单点名
+                    <span class="badge-class">天命之册</span>
+                </div>
+                <div class="tool-desc">
+                    📋 完整名单·随机轮盘点名 · 教师专属视图
+                    <span>58人隐匿花名</span>
+                </div>
+            </div>
+            <div class="arrow-icon">➡️</div>
+        </a>
+
+        <!-- 原链接2: 727班点名.html 智慧课堂点名器 -->
+        <a href="https://luow.cloud-ip.cc/727%E7%8F%AD%E7%82%B9%E5%90%8D.html" class="tool-card" target="_blank" rel="noopener noreferrer">
+            <div class="tool-info">
+                <div class="tool-title">
+                    🎯 智慧课堂 · 极简随机点名
+                    <span class="badge-class">727班花名册</span>
+                </div>
+                <div class="tool-desc">
+                    ⚡ 滚动抽取 · 手动录入 · 班级互动
+                    <span>极速点名器</span>
+                </div>
+            </div>
+            <div class="arrow-icon">➡️</div>
+        </a>
+
+        <!-- 新增: 727班语文背诵任务.html -->
+        <a href="https://luow.cloud-ip.cc/727%E7%8F%AD%E8%AF%AD%E6%96%87%E8%83%8C%E8%AF%B5%E4%BB%BB%E5%8A%A1.html" class="tool-card" target="_blank" rel="noopener noreferrer">
+            <div class="tool-info">
+                <div class="tool-title">
+                    📖 727班 · 语文背诵任务
+                    <span class="badge-class">古诗词·文言文</span>
+                </div>
+                <div class="tool-desc">
+                    🧠 背诵进度追踪 · 抽背清单 · 教师任务发布
+                    <span>必背篇目</span>
+                </div>
+            </div>
+            <div class="arrow-icon">➡️</div>
+        </a>
+
+        <!-- ========= 735 班级专区 ========= -->
+        <div class="section-divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">📚 735班 · 专属工具</span>
+            <div class="divider-line"></div>
+        </div>
+
+        <!-- 新增: 735班点名系统.html -->
+        <a href="https://luow.cloud-ip.cc/735%E7%8F%AD%E7%82%B9%E5%90%8D%E7%B3%BB%E7%BB%9F.html" class="tool-card" target="_blank" rel="noopener noreferrer">
+            <div class="tool-info">
+                <div class="tool-title">
+                    🎲 735班 · 智能点名系统
+                    <span class="badge-class">花名册+随机抽取</span>
+                </div>
+                <div class="tool-desc">
+                    🚀 动态点名 · 数据统计 · 课堂考勤
+                    <span>735专属</span>
+                </div>
+            </div>
+            <div class="arrow-icon">➡️</div>
+        </a>
+
+        <!-- 新增: 735班语文背诵任务.html -->
+        <a href="https://luow.cloud-ip.cc/735%E7%8F%AD%E8%AF%AD%E6%96%87%E8%83%8C%E8%AF%B5%E4%BB%BB%E5%8A%A1.html" class="tool-card" target="_blank" rel="noopener noreferrer">
+            <div class="tool-info">
+                <div class="tool-title">
+                    📖 735班 · 语文背诵任务
+                    <span class="badge-class">经典篇目通关</span>
+                </div>
+                <div class="tool-desc">
+                    🧾 背诵打卡 · 课文检查 · 教师助手
+                    <span>高效督背</span>
+                </div>
+            </div>
+            <div class="arrow-icon">➡️</div>
+        </a>
+
+        <!-- ========= 通用抽背工具 ========= -->
+        <div class="section-divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">🔄 通用 · 抽查工具</span>
+            <div class="divider-line"></div>
+        </div>
+
+        <!-- 新增: 抽背.html 通用随机抽背 -->
+        <a href="https://luow.cloud-ip.cc/%E6%8A%BD%E8%83%8C.html" class="tool-card" target="_blank" rel="noopener noreferrer">
+            <div class="tool-info">
+                <div class="tool-title">
+                    🎲 通用抽背 · 随机滚屏抽查
+                    <span class="badge-class">全学科适用</span>
+                </div>
+                <div class="tool-desc">
+                    🔔 一键随机抽选学生 · 背诵监督神器
+                    <span>抽背轮盘</span>
+                </div>
+            </div>
+            <div class="arrow-icon">➡️</div>
+        </a>
+    </div>
+
+    <div class="footer-links">
+        <span>🔗 点击任意卡片，新标签页打开工具</span>
+        <span>📌 点名/背诵系统均为班级内部教学专用</span>
+        <span>⭐ <a href="https://luow.cloud-ip.cc/727.html" target="_blank" rel="noopener noreferrer">隐藏花名册</a> · <a href="https://luow.cloud-ip.cc/735%E7%8F%AD%E7%82%B9%E5%90%8D%E7%B3%BB%E7%BB%9F.html" target="_blank" rel="noopener noreferrer">735点名</a></span>
+    </div>
+</div>
+</body>
+</html>
