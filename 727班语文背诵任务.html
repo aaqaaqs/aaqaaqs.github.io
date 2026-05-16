@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>文曲双鉴 · 学生+任务抽背系统 | 课堂互动罗盘</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 10% 30%, #1f2c1b, #0f1a0c);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Serif SC', 'Roboto', system-ui, serif;
+            padding: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 主容器 —— 古风卷轴 */
+        .scroll-stage {
+            max-width: 1400px;
+            width: 100%;
+            background: #fef7e9;
+            background-image: radial-gradient(circle at 25% 40%, rgba(230, 210, 170, 0.2) 2%, transparent 2.5%);
+            background-size: 28px 28px;
+            border-radius: 64px;
+            padding: 28px 34px 44px;
+            box-shadow: 0 30px 45px rgba(0, 0, 0, 0.5), inset 0 1px 4px rgba(255, 250, 220, 0.8);
+            border: 1px solid #e9d2a3;
+        }
+
+        /* 双抽核心面板 */
+        .dual-core {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 28px;
+            margin-bottom: 40px;
+        }
+
+        .card {
+            flex: 1;
+            min-width: 260px;
+            background: #fffaf0;
+            border-radius: 48px;
+            padding: 24px 20px 32px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255,245,215,0.9);
+            border: 1px solid #f1e2c0;
+            transition: all 0.2s;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #a56b2f;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 4px;
+            border-bottom: 2px dashed #e7c896;
+            display: inline-block;
+            width: 100%;
+            padding-bottom: 10px;
+        }
+
+        .screen {
+            text-align: center;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fef3df;
+            border-radius: 40px;
+            margin: 12px 0 8px;
+            padding: 24px 12px;
+            box-shadow: inset 0 1px 6px rgba(90, 60, 30, 0.1), 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        #rollingStudent, #rollingTask {
+            font-size: 1.9rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2f4f2f, #b46b3a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            transition: all 0.06s linear;
+            word-break: break-word;
+            line-height: 1.3;
+            font-family: 'Segoe UI', 'Noto Serif SC', serif;
+        }
+
+        /* 高亮定格特效 */
+        .highlight {
+            background: linear-gradient(135deg, #e68a2e, #ffc857, #ff9f4a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 18px #ffbc6e;
+            animation: goldenFlash 0.4s cubic-bezier(0.2, 1.1, 0.4, 1);
+        }
+
+        @keyframes goldenFlash {
+            0% { transform: scale(1); letter-spacing: 0px; opacity: 0.8;}
+            40% { transform: scale(1.05); letter-spacing: 2px; text-shadow: 0 0 28px #ffae42; }
+            100% { transform: scale(1); letter-spacing: 0px; }
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-size: 1.3rem;
+            font-weight: 600;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: #3a4a35;
+            color: #fff6e5;
+            box-shadow: 0 5px 0 #233020;
+            letter-spacing: 2px;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #b45f2b;
+            box-shadow: 0 5px 0 #733d1a;
+        }
+        .btn-primary:hover {
+            background: #cf763c;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #733d1a;
+        }
+        .btn-danger {
+            background: #8b3c2c;
+            box-shadow: 0 5px 0 #56221a;
+        }
+        .btn-danger:hover {
+            background: #b24d38;
+            transform: translateY(-2px);
+        }
+        .btn-warning {
+            background: #5f6e56;
+            box-shadow: 0 5px 0 #3c4a34;
+        }
+        .btn-warning:hover {
+            background: #7e9472;
+            transform: translateY(-2px);
+        }
+
+        /* 管理区双栏 */
+        .management-split {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 12px;
+        }
+        .manage-panel {
+            flex: 1;
+            background: #fef5e8;
+            border-radius: 44px;
+            padding: 20px 24px;
+            border: 1px solid #e7d5b5;
+        }
+        .panel-header {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #7b582e;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-left: 6px solid #e0a458;
+            padding-left: 16px;
+        }
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .input-field {
+            flex: 4;
+            padding: 12px 20px;
+            border-radius: 48px;
+            border: 1px solid #dac29c;
+            background: #fff9f0;
+            font-size: 0.9rem;
+            outline: none;
+            font-family: monospace;
+        }
+        .input-field:focus {
+            border-color: #e0a458;
+            box-shadow: 0 0 0 2px #ffcd94;
+        }
+        .small-btn {
+            background: #7c9a6e;
+            padding: 0 24px;
+            border-radius: 48px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            border: none;
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            transition: 0.1s;
+        }
+        .small-btn:hover {
+            background: #9bbd8a;
+            transform: scale(0.98);
+        }
+        .list-container {
+            max-height: 260px;
+            overflow-y: auto;
+            background: #fcf3e2;
+            border-radius: 28px;
+            padding: 12px 12px;
+            margin-top: 12px;
+        }
+        .tag {
+            display: inline-block;
+            background: #f3e5d3;
+            padding: 6px 18px;
+            margin: 6px 8px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: #4e3a22;
+            border-left: 3px solid #e0a458;
+            transition: 0.05s;
+        }
+        .del-icon {
+            margin-left: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #b96f30;
+            font-size: 0.85rem;
+        }
+        .del-icon:hover {
+            color: #c0392b;
+        }
+        .empty-note {
+            text-align: center;
+            padding: 28px;
+            color: #b48b54;
+            font-style: italic;
+        }
+        .badge-number {
+            background: #ecd9b4;
+            padding: 2px 12px;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            margin-left: 12px;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        button.link-style {
+            background: none;
+            border: 1px solid #c0a471;
+            padding: 4px 14px;
+            border-radius: 32px;
+            font-size: 0.7rem;
+            color: #8b6946;
+            cursor: pointer;
+        }
+        @media (max-width: 880px) {
+            #rollingStudent, #rollingTask { font-size: 1.3rem; }
+            .btn { padding: 8px 20px; font-size: 1rem; }
+            .card { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+<div class="scroll-stage">
+    <!-- 双抽区域：学生 + 任务 -->
+    <div class="dual-core">
+        <div class="card">
+            <div class="card-title">🎓 抽选学子</div>
+            <div class="screen"><div id="rollingStudent">✨ 待点名 ✨</div></div>
+        </div>
+        <div class="card">
+            <div class="card-title">📜 抽背任务</div>
+            <div class="screen"><div id="rollingTask">📖 待抽任务 📖</div></div>
+        </div>
+    </div>
+
+    <!-- 全局控制按钮 -->
+    <div class="action-bar">
+        <button class="btn btn-primary" id="startBothBtn">🌀 双轨滚动</button>
+        <button class="btn btn-primary" id="stopBothBtn">🏆 定格抽选</button>
+        <button class="btn btn-warning" id="globalResetBtn">🗑️ 清空全部数据</button>
+    </div>
+
+    <!-- 学生 & 任务 双管理区 -->
+    <div class="management-split">
+        <!-- 学生管理区 -->
+        <div class="manage-panel">
+            <div class="panel-header">
+                👥 学生名册
+                <span class="badge-number" id="studentCount">0人</span>
+                <button class="link-style" id="resetStudentDefault" style="margin-left: auto;">📖 恢复默认班级</button>
+            </div>
+            <div class="input-group">
+                <input type="text" id="studentInput" class="input-field" placeholder="新学生姓名, 例如: 王阳明" autocomplete="off">
+                <button class="small-btn" id="addStudentBtn">➕ 添加</button>
+            </div>
+            <div class="list-container" id="studentListArea">
+                <div class="empty-note">✨ 暂无学生，请添加</div>
+            </div>
+        </div>
+
+        <!-- 任务管理区 -->
+        <div class="manage-panel">
+            <div class="panel-header">
+                📚 背诵任务库
+                <span class="badge-number" id="taskCount">0项</span>
+                <button class="link-style" id="resetTaskDefault" style="margin-left: auto;">📜 恢复默认任务</button>
+            </div>
+            <div class="input-group">
+                <input type="text" id="taskInput" class="input-field" placeholder="新任务: 背诵《赤壁赋》全文" autocomplete="off">
+                <button class="small-btn" id="addTaskBtn">➕ 添加</button>
+            </div>
+            <div class="list-container" id="taskListArea">
+                <div class="empty-note">📭 暂无任务，请添加抽背内容</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------- 📌 原始数据 ----------
+    const FULL_STUDENT_LIST = [
+        "聂晓宇", "桂祁丹", "刘柏琳", "郑瀚", "伍飞翔", "刘淳", "谢青霖", "陈相东", "邓佳欣", "郑琪琳",
+        "邓雅乐", "黄帅", "周宇浩", "唐静雯", "李嘉敏", "唐骏涛", "唐雨菲", "杨章楠", "李文兴", "黄子涵",
+        "周彬彬", "曾子璇", "肖鸿瑞", "张芷萱", "周森", "邓力荣", "唐雨涵", "朱佳辉", "陈禹帆", "汪周杰",
+        "于文豪", "周纵", "欧科辰", "王露灵", "杨皓轩", "蒋力弘", "许瑞嘉", "李欣颖", "李嘉厚", "周旸",
+        "邹浪", "谢晓锋", "谭祁轩", "冯佳欣", "匡琦", "桂旭咏", "王屹东", "奉卓翼", "文嘉豪",
+        "周威翔", "蒋昊辰", "郭菁", "贺卓帆", "唐荣承", "杨正茂", "曾栩勤", "朱永斌", "高林峰"
+    ];
+
+    const FULL_TASK_LIST = [
+        "背诵《过洞庭》", "背诵《登岳阳楼》", "背诵《金陵怀古》", "背诵《阿房宫赋》第一段",
+        "背诵《阿房宫赋》第二段", "背诵《阿房宫赋》第三段", "背诵《阿房宫赋》第四段",
+        "背诵《谏太宗十思疏》第三段", "背诵《谏太宗十思疏》第二段", "背诵《谏太宗十思疏》第一段",
+        "背诵《答司马谏议书》第一、三段", "背诵《谏太宗十思疏》第二段", "背诵《子路、曾皙、冉有、公西华侍坐》1-8段",
+        "背诵《子路、曾皙、冉有、公西华侍坐》9-21段", "背诵《六国论》第一段", "背诵《六国论》第二段",
+        "背诵《六国论》第三段", "背诵《六国论》第四、五段", "背诵《游园》"
+    ];
+
+    // ---------- 全局状态 ----------
+    let students = [];        // 学生数组
+    let tasks = [];           // 任务数组
+    let rollingInterval = null;
+    let isRolling = false;
+
+    // DOM 元素
+    const rollingStudentDiv = document.getElementById('rollingStudent');
+    const rollingTaskDiv = document.getElementById('rollingTask');
+    const startBothBtn = document.getElementById('startBothBtn');
+    const stopBothBtn = document.getElementById('stopBothBtn');
+    const globalResetBtn = document.getElementById('globalResetBtn');
+
+    // 学生相关
+    const studentInput = document.getElementById('studentInput');
+    const addStudentBtn = document.getElementById('addStudentBtn');
+    const studentListArea = document.getElementById('studentListArea');
+    const studentCountSpan = document.getElementById('studentCount');
+    const resetStudentDefaultBtn = document.getElementById('resetStudentDefault');
+
+    // 任务相关
+    const taskInput = document.getElementById('taskInput');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const taskListArea = document.getElementById('taskListArea');
+    const taskCountSpan = document.getElementById('taskCount');
+    const resetTaskDefaultBtn = document.getElementById('resetTaskDefault');
+
+    // ---------- 辅助函数 ----------
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // 渲染学生列表 + 计数
+    function renderStudentList() {
+        if (!studentListArea) return;
+        if (students.length === 0) {
+            studentListArea.innerHTML = `<div class="empty-note">🎓 暂无学子，请添加或恢复默认</div>`;
+            studentCountSpan.innerText = `0人`;
+            return;
+        }
+        let html = '';
+        students.forEach((stu, idx) => {
+            html += `<span class="tag">${escapeHtml(stu)}<span class="del-icon" data-name="${escapeHtml(stu)}" data-type="student">✖️</span></span>`;
+        });
+        studentListArea.innerHTML = html;
+        studentCountSpan.innerText = `${students.length}人`;
+
+        // 绑定删除事件
+        document.querySelectorAll('.del-icon[data-type="student"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const name = btn.getAttribute('data-name');
+                if (name) removeStudentByName(name);
+            });
+        });
+    }
+
+    function removeStudentByName(name) {
+        const idx = students.indexOf(name);
+        if (idx !== -1) {
+            students.splice(idx, 1);
+            if (students.length === 0 && isRolling) maybeStopRollingDueToEmpty();
+            renderStudentList();
+            if (!isRolling) updateStaticStudentDisplay();
+        }
+    }
+
+    function updateStaticStudentDisplay() {
+        if (!isRolling) {
+            if (students.length > 0) rollingStudentDiv.innerText = students[0];
+            else rollingStudentDiv.innerText = "🎓 无学生";
+            rollingStudentDiv.classList.remove('highlight');
+        }
+    }
+
+    // 任务渲染
+    function renderTaskList() {
+        if (!taskListArea) return;
+        if (tasks.length === 0) {
+            taskListArea.innerHTML = `<div class="empty-note">📭 抽背任务库为空，请添加</div>`;
+            taskCountSpan.innerText = `0项`;
+            return;
+        }
+        let html = '';
+        tasks.forEach((tsk, idx) => {
+            html += `<span class="tag">${escapeHtml(tsk)}<span class="del-icon" data-taskname="${escapeHtml(tsk)}" data-type="task">✖️</span></span>`;
+        });
+        taskListArea.innerHTML = html;
+        taskCountSpan.innerText = `${tasks.length}项`;
+
+        document.querySelectorAll('.del-icon[data-type="task"]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const taskName = btn.getAttribute('data-taskname');
+                if (taskName) removeTaskByName(taskName);
+            });
+        });
+    }
+
+    function removeTaskByName(taskContent) {
+        const idx = tasks.indexOf(taskContent);
+        if (idx !== -1) {
+            tasks.splice(idx, 1);
+            if (tasks.length === 0 && isRolling) maybeStopRollingDueToEmpty();
+            renderTaskList();
+            if (!isRolling) updateStaticTaskDisplay();
+        }
+    }
+
+    function updateStaticTaskDisplay() {
+        if (!isRolling) {
+            if (tasks.length > 0) rollingTaskDiv.innerText = tasks[0];
+            else rollingTaskDiv.innerText = "📖 无抽背任务";
+            rollingTaskDiv.classList.remove('highlight');
+        }
+    }
+
+    // 当学生或任务为空时，若滚动则自动停止并提示
+    function maybeStopRollingDueToEmpty() {
+        if (isRolling && (students.length === 0 || tasks.length === 0)) {
+            stopRollingAndClearTimer();
+            if (students.length === 0) rollingStudentDiv.innerText = "❌ 无学生，无法滚动";
+            if (tasks.length === 0) rollingTaskDiv.innerText = "❌ 无任务，无法滚动";
+            rollingStudentDiv.classList.remove('highlight');
+            rollingTaskDiv.classList.remove('highlight');
+        }
+    }
+
+    function stopRollingAndClearTimer() {
+        if (rollingInterval) {
+            clearInterval(rollingInterval);
+            rollingInterval = null;
+        }
+        isRolling = false;
+    }
+
+    // 获取随机学生/任务
+    function getRandomStudent() {
+        if (students.length === 0) return "✨ 无学子 ✨";
+        return students[Math.floor(Math.random() * students.length)];
+    }
+    function getRandomTask() {
+        if (tasks.length === 0) return "📭 无任务";
+        return tasks[Math.floor(Math.random() * tasks.length)];
+    }
+
+    // 开始双轨滚动
+    function startBothRolling() {
+        if (students.length === 0 || tasks.length === 0) {
+            let msg = "";
+            if (students.length === 0) msg += "学生名单为空！";
+            if (tasks.length === 0) msg += (msg ? " 且任务列表为空。" : "任务列表为空。");
+            alert(`无法滚动: ${msg} 请先添加或恢复默认数据。`);
+            return;
+        }
+        if (isRolling) return;
+        rollingStudentDiv.classList.remove('highlight');
+        rollingTaskDiv.classList.remove('highlight');
+        if (rollingInterval) clearInterval(rollingInterval);
+        rollingInterval = setInterval(() => {
+            if (students.length > 0) rollingStudentDiv.innerText = getRandomStudent();
+            else if (students.length === 0 && isRolling) maybeStopRollingDueToEmpty();
+            if (tasks.length > 0) rollingTaskDiv.innerText = getRandomTask();
+            else if (tasks.length === 0 && isRolling) maybeStopRollingDueToEmpty();
+        }, 65);
+        isRolling = true;
+    }
+
+    // 停止滚动 + 双高亮定格 (确保抽中有效数据)
+    function stopAndHighlight() {
+        if (!isRolling) {
+            // 没滚动状态下也可强化高亮当前显示（如果有效）
+            const curStudent = rollingStudentDiv.innerText;
+            const curTask = rollingTaskDiv.innerText;
+            if (students.length > 0 && students.includes(curStudent)) rollingStudentDiv.classList.add('highlight');
+            else if (students.length > 0) { rollingStudentDiv.innerText = students[0]; rollingStudentDiv.classList.add('highlight'); }
+            if (tasks.length > 0 && tasks.includes(curTask)) rollingTaskDiv.classList.add('highlight');
+            else if (tasks.length > 0) { rollingTaskDiv.innerText = tasks[0]; rollingTaskDiv.classList.add('highlight'); }
+            return;
+        }
+        // 停止计时器
+        if (rollingInterval) {
+            clearInterval(rollingInterval);
+            rollingInterval = null;
+        }
+        isRolling = false;
+
+        // 定格当前屏幕内容，并校验有效性
+        let finalStudent = rollingStudentDiv.innerText;
+        let finalTask = rollingTaskDiv.innerText;
+
+        if (students.length > 0) {
+            if (!students.includes(finalStudent) || finalStudent === "✨ 无学子 ✨") {
+                finalStudent = students[Math.floor(Math.random() * students.length)];
+                rollingStudentDiv.innerText = finalStudent;
+            }
+            rollingStudentDiv.classList.add('highlight');
+        } else {
+            rollingStudentDiv.innerText = "🎓 无学生可抽";
+            rollingStudentDiv.classList.remove('highlight');
+        }
+
+        if (tasks.length > 0) {
+            if (!tasks.includes(finalTask) || finalTask === "📭 无任务") {
+                finalTask = tasks[Math.floor(Math.random() * tasks.length)];
+                rollingTaskDiv.innerText = finalTask;
+            }
+            rollingTaskDiv.classList.add('highlight');
+        } else {
+            rollingTaskDiv.innerText = "📜 无抽背任务";
+            rollingTaskDiv.classList.remove('highlight');
+        }
+    }
+
+    // 清空全部（学生+任务）
+    function globalClearAll() {
+        if (confirm("⚠️ 清空所有学生和所有任务？此操作不可撤销。")) {
+            if (isRolling) stopRollingAndClearTimer();
+            students = [];
+            tasks = [];
+            renderStudentList();
+            renderTaskList();
+            rollingStudentDiv.innerText = "✨ 已清空 ✨";
+            rollingTaskDiv.innerText = "✨ 已清空 ✨";
+            rollingStudentDiv.classList.remove('highlight');
+            rollingTaskDiv.classList.remove('highlight');
+        }
+    }
+
+    // 添加学生
+    function addStudent() {
+        let newName = studentInput.value.trim();
+        if (newName === "") { alert("请输入学生姓名"); return; }
+        students.push(newName);
+        renderStudentList();
+        studentInput.value = "";
+        if (!isRolling && students.length > 0) {
+            const placeholders = ["✨ 待点名 ✨", "🎓 无学生", "✨ 已清空 ✨", "❌ 无学生，无法滚动"];
+            if (placeholders.includes(rollingStudentDiv.innerText)) {
+                rollingStudentDiv.innerText = students[0];
+                rollingStudentDiv.classList.remove('highlight');
+            }
+        }
+    }
+
+    // 添加任务
+    function addTask() {
+        let newTask = taskInput.value.trim();
+        if (newTask === "") { alert("请输入抽背任务"); return; }
+        tasks.push(newTask);
+        renderTaskList();
+        taskInput.value = "";
+        if (!isRolling && tasks.length > 0) {
+            const placeholders = ["📖 待抽任务 📖", "📖 无抽背任务", "✨ 已清空 ✨", "❌ 无任务，无法滚动"];
+            if (placeholders.includes(rollingTaskDiv.innerText)) {
+                rollingTaskDiv.innerText = tasks[0];
+                rollingTaskDiv.classList.remove('highlight');
+            }
+        }
+    }
+
+    // 重置默认学生
+    function resetStudentsDefault() {
+        if (confirm("重置学生名单为原始班级（聂晓宇...高林峰）？当前学生将被覆盖。")) {
+            if (isRolling && students.length === 0 && tasks.length > 0) { /* 继续 */ }
+            students = [...FULL_STUDENT_LIST];
+            renderStudentList();
+            if (!isRolling) {
+                rollingStudentDiv.innerText = students.length ? students[0] : "🎓 无学生";
+                rollingStudentDiv.classList.remove('highlight');
+            }
+        }
+    }
+
+    function resetTasksDefault() {
+        if (confirm("重置为原始抽背任务（过洞庭、六国论等19项任务）？当前任务将被替换。")) {
+            tasks = [...FULL_TASK_LIST];
+            renderTaskList();
+            if (!isRolling) {
+                rollingTaskDiv.innerText = tasks.length ? tasks[0] : "📖 无任务";
+                rollingTaskDiv.classList.remove('highlight');
+            }
+        }
+    }
+
+    // 初始化
+    function init() {
+        students = [...FULL_STUDENT_LIST];
+        tasks = [...FULL_TASK_LIST];
+        renderStudentList();
+        renderTaskList();
+        rollingStudentDiv.innerText = students.length ? students[0] : "🎓 加载中";
+        rollingTaskDiv.innerText = tasks.length ? tasks[0] : "📖 加载中";
+        rollingStudentDiv.classList.remove('highlight');
+        rollingTaskDiv.classList.remove('highlight');
+        isRolling = false;
+        if (rollingInterval) clearInterval(rollingInterval);
+
+        // 事件绑定
+        startBothBtn.addEventListener('click', startBothRolling);
+        stopBothBtn.addEventListener('click', stopAndHighlight);
+        globalResetBtn.addEventListener('click', globalClearAll);
+        addStudentBtn.addEventListener('click', addStudent);
+        addTaskBtn.addEventListener('click', addTask);
+        resetStudentDefaultBtn.addEventListener('click', resetStudentsDefault);
+        resetTaskDefaultBtn.addEventListener('click', resetTasksDefault);
+        studentInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addStudent(); });
+        taskInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') addTask(); });
+    }
+
+    init();
+</script>
+</body>
+</html>

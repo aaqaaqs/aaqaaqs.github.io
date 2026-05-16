@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>智慧课堂 · 极简随机点名器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* 避免投影时鼠标拖动干扰 */
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #1a2a3a 0%, #0f1a24 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Poppins', 'Roboto', system-ui, -apple-system, 'Microsoft YaHei', sans-serif;
+            padding: 24px;
+        }
+
+        /* 主卡片容器 */
+        .container {
+            max-width: 1300px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(2px);
+            border-radius: 64px;
+            padding: 28px 32px 40px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255,255,255,0.1);
+            transition: all 0.2s;
+        }
+
+        /* 点名核心显示区 */
+        .spotlight {
+            background: #0b1219;
+            border-radius: 56px;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.5), 0 8px 20px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,215,0,0.2);
+        }
+
+        .name-screen {
+            text-align: center;
+            min-height: 240px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #rollingName {
+            font-size: 5.6rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: #eef4ff;
+            text-shadow: 0 4px 18px rgba(0,0,0,0.4);
+            transition: all 0.08s ease;
+            background: linear-gradient(135deg, #ffffff, #c0e0ff);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: none;
+            font-family: 'Segoe UI', 'Poppins', system-ui;
+            word-break: break-word;
+            padding: 0 20px;
+        }
+
+        /* 高亮定格样式 (停止时添加) */
+        .highlight-name {
+            background: linear-gradient(135deg, #FFD966, #FFB347);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 12px rgba(255,180,60,0.6);
+            animation: gentlePulse 0.4s ease-out;
+        }
+
+        @keyframes gentlePulse {
+            0% { transform: scale(1); letter-spacing: 4px; opacity: 0.9; }
+            50% { transform: scale(1.05); letter-spacing: 8px; text-shadow: 0 0 20px gold; }
+            100% { transform: scale(1); letter-spacing: 4px; }
+        }
+
+        /* 按钮区域 */
+        .action-bar {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-size: 1.6rem;
+            font-weight: 600;
+            padding: 14px 36px;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: #2c3e2f;
+            color: white;
+            box-shadow: 0 5px 0 rgba(0,0,0,0.2);
+            letter-spacing: 2px;
+            backdrop-filter: blur(4px);
+            font-family: inherit;
+        }
+
+        .btn-start {
+            background: #1f6d49;
+            box-shadow: 0 5px 0 #0e3a25;
+        }
+        .btn-start:hover {
+            background: #2a8e5c;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #0e3a25;
+        }
+        .btn-stop {
+            background: #b84c2c;
+            box-shadow: 0 5px 0 #6e2c14;
+        }
+        .btn-stop:hover {
+            background: #cf5e3a;
+            transform: translateY(-2px);
+        }
+        .btn-clear {
+            background: #3a4c6b;
+            box-shadow: 0 5px 0 #1f2e46;
+        }
+        .btn-clear:hover {
+            background: #4f6790;
+            transform: translateY(-2px);
+        }
+
+        /* 名单编辑区 */
+        .editor-panel {
+            background: rgba(30, 40, 50, 0.7);
+            border-radius: 48px;
+            padding: 24px 28px;
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,255,200,0.2);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #FFE5B4;
+            margin-bottom: 18px;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .student-input {
+            flex: 4;
+            min-width: 220px;
+            padding: 16px 24px;
+            font-size: 1rem;
+            border-radius: 48px;
+            border: none;
+            background: #fef9ef;
+            font-family: monospace;
+            font-weight: 500;
+            outline: none;
+            transition: 0.2s;
+            box-shadow: inset 0 1px 3px #0002;
+        }
+
+        .student-input:focus {
+            background: #ffffff;
+            box-shadow: 0 0 0 3px #ffb34780;
+        }
+
+        .btn-add {
+            background: #3c7a5e;
+            box-shadow: 0 4px 0 #1f4d38;
+            padding: 0 32px;
+            font-size: 1.2rem;
+        }
+
+        .btn-add:hover {
+            background: #569e7c;
+        }
+
+        /* 名单列表展示 */
+        .student-list-container {
+            max-height: 280px;
+            overflow-y: auto;
+            background: #0e171f;
+            border-radius: 32px;
+            padding: 16px 18px;
+            margin-top: 12px;
+        }
+
+        .student-tag {
+            display: inline-block;
+            background: #1f2e3c;
+            color: #eef4ff;
+            padding: 8px 18px;
+            margin: 8px 10px;
+            border-radius: 48px;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: 0.1s;
+            box-shadow: 0 1px 3px black;
+            cursor: default;
+            border-left: 3px solid #ffaa44;
+        }
+
+        .student-tag:hover {
+            background: #2b4458;
+            transform: scale(1.02);
+        }
+
+        .empty-list-msg {
+            color: #aab7c4;
+            text-align: center;
+            padding: 28px;
+            font-size: 1.2rem;
+            font-style: italic;
+        }
+
+        /* 滚动条 */
+        .student-list-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        .student-list-container::-webkit-scrollbar-track {
+            background: #0b1117;
+            border-radius: 10px;
+        }
+        .student-list-container::-webkit-scrollbar-thumb {
+            background: #cfa668;
+            border-radius: 10px;
+        }
+
+        /* 计数器+工具 */
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 18px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .badge {
+            background: #00000066;
+            padding: 6px 18px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            color: #ffdd99;
+            font-weight: 500;
+        }
+        .clear-mini {
+            background: none;
+            border: 1px solid #f25e5e80;
+            padding: 6px 20px;
+            border-radius: 60px;
+            color: #ffbc9a;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+        }
+        .clear-mini:hover {
+            background: #b84c2c60;
+            border-color: #ffa25e;
+            color: white;
+        }
+
+        @media (max-width: 720px) {
+            .container {
+                padding: 20px;
+            }
+            #rollingName {
+                font-size: 2.6rem;
+            }
+            .btn {
+                padding: 10px 24px;
+                font-size: 1.2rem;
+            }
+            .name-screen {
+                min-height: 160px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- 点名聚光灯区域 -->
+    <div class="spotlight">
+        <div class="name-screen">
+            <div id="rollingName">✨ 点名器 ✨</div>
+        </div>
+    </div>
+
+    <!-- 主控按钮组 -->
+    <div class="action-bar">
+        <button class="btn btn-start" id="startBtn">▶ 开始滚动</button>
+        <button class="btn btn-stop" id="stopBtn">⏹️ 停止点名</button>
+        <button class="btn btn-clear" id="globalClearBtn">🗑️ 清空全部名单</button>
+    </div>
+
+    <!-- 编辑面板 -->
+    <div class="editor-panel">
+        <div class="section-title">
+            📋 花名册管理
+            <span class="badge" id="studentCountBadge">0 人</span>
+        </div>
+        <div class="input-group">
+            <input type="text" id="studentNameInput" class="student-input" placeholder="输入新同学姓名，例如: 欧阳若曦" autocomplete="off">
+            <button class="btn btn-add" id="addStudentBtn">➕ 添加</button>
+        </div>
+        <div class="info-bar">
+            <span style="font-size:0.85rem; color:#bcd0e0;">💡 支持手动输入，支持中文/英文名</span>
+            <button id="softResetBtn" class="clear-mini">🧹 仅清空列表(保留默认?)</button>
+        </div>
+        <div class="student-list-container" id="studentListContainer">
+            <!-- 动态渲染学生列表 -->
+            <div class="empty-list-msg">✨ 暂无名单，请添加学生 ✨</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ----------------------------- 初始默认学生名单 (依据题目提供) ---------------------------------
+    const DEFAULT_STUDENTS = [
+        "聂晓宇", "桂祁丹", "刘柏琳", "郑瀚", "伍飞翔", "刘淳", "谢青霖", "陈相东", "邓佳欣", "郑琪琳",
+        "邓雅乐", "黄帅", "周宇浩", "唐静雯", "李嘉敏", "唐骏涛", "唐雨菲", "杨章楠", "李文兴", "黄子涵",
+        "周彬彬", "曾子璇", "肖鸿瑞", "张芷萱", "周森", "邓力荣", "唐雨涵", "朱佳辉", "陈禹帆", "汪周杰",
+        "于文豪", "周纵", "欧科辰", "王露灵", "杨皓轩", "蒋力弘", "许瑞嘉", "李欣颖", "李嘉厚", "周旸",
+        "邹浪", "谢晓锋", "谭祁轩", "冯佳欣", "匡琦", "桂旭咏", "王屹东", "奉卓翼", "文嘉豪",
+        "周威翔", "蒋昊辰", "郭菁", "贺卓帆", "唐荣承", "杨正茂", "曾栩勤", "朱永斌", "高林峰"
+    ];
+
+    // ---------- 全局状态 ----------
+    let studentsList = [];        // 存储学生姓名 (字符串数组)
+    let rollingInterval = null;   // 定时器id
+    let isRolling = false;        // 是否滚动中
+
+    // DOM 元素
+    const rollingNameDiv = document.getElementById('rollingName');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const globalClearBtn = document.getElementById('globalClearBtn');
+    const addStudentBtn = document.getElementById('addStudentBtn');
+    const studentNameInput = document.getElementById('studentNameInput');
+    const studentListContainer = document.getElementById('studentListContainer');
+    const studentCountBadge = document.getElementById('studentCountBadge');
+    const softResetBtn = document.getElementById('softResetBtn');
+
+    // ---------- 辅助函数：更新界面上的学生列表 + 计数 ----------
+    function renderStudentList() {
+        if (!studentListContainer) return;
+
+        if (studentsList.length === 0) {
+            studentListContainer.innerHTML = `<div class="empty-list-msg">📭 名单空空如也，请添加学生～</div>`;
+            studentCountBadge.innerText = `0 人`;
+            return;
+        }
+
+        // 生成tag列表
+        let html = '';
+        studentsList.forEach((name, idx) => {
+            // 加一点交互删除的按钮不方便但为了简洁，提供单击删除小功能? 也可额外加✖️。为了体验且符合基本需求，但题目未强制要求删除单个，但良好的设计：单击某个名字可删除（老师方便）
+            // 添加一个隐形删除，但是为了避免误触做成双击删除比较稳妥，也可以直接做一个小叉，但为了简约大气，给每个名字后面加个小 ✖️ 并不可见hover显示? 
+            // 这里决定：增加优雅删除方式：鼠标悬浮显示删除小标志，单击小标志删除单个 (不会影响点名核心)
+            // 保持功能强大，完全满足教室需求。
+            html += `
+                <span class="student-tag" data-name="${escapeHtml(name)}" data-index="${idx}">
+                    ${escapeHtml(name)}
+                    <span class="delete-student-btn" data-name="${escapeHtml(name)}" style="margin-left: 10px; cursor: pointer; font-weight: bold; color: #ffaa77; font-size: 1rem; display: inline-block;">🗑️</span>
+                </span>
+            `;
+        });
+        studentListContainer.innerHTML = html;
+        studentCountBadge.innerText = `${studentsList.length} 人`;
+
+        // 绑定删除事件 (事件委托)
+        const container = studentListContainer;
+        container.querySelectorAll('.delete-student-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const nameToDel = btn.getAttribute('data-name');
+                if (nameToDel) {
+                    removeStudentByName(nameToDel);
+                }
+            });
+        });
+        // 额外再绑定整个tag的双击也可，但不影响主流
+    }
+
+    // 简单的防XSS
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // 根据名称删除单个学生
+    function removeStudentByName(name) {
+        const index = studentsList.indexOf(name);
+        if (index !== -1) {
+            studentsList.splice(index, 1);
+            // 如果滚动中并删除后无学生，需停止滚动防止报错
+            if (studentsList.length === 0 && isRolling) {
+                stopRollingAndClearTimer();
+                rollingNameDiv.innerText = "👩‍🏫 无学生";
+                rollingNameDiv.classList.remove('highlight-name');
+            }
+            renderStudentList();
+            // 如果当前停止状态，显示的名字若正好被删除，为了避免显示已删除，重置显示为首个或占位符
+            if (!isRolling) {
+                updateStaticDisplayWithFirst();
+            }
+        }
+    }
+
+    // 停止滚动并清空计时器
+    function stopRollingAndClearTimer() {
+        if (rollingInterval) {
+            clearInterval(rollingInterval);
+            rollingInterval = null;
+        }
+        isRolling = false;
+    }
+
+    // 当不在滚动时，刷新展示第一个学生（或提示）
+    function updateStaticDisplayWithFirst() {
+        if (!isRolling) {
+            if (studentsList.length > 0) {
+                rollingNameDiv.innerText = studentsList[0];
+            } else {
+                rollingNameDiv.innerText = "📌 暂无名单";
+            }
+            // 移除高亮效果
+            rollingNameDiv.classList.remove('highlight-name');
+        }
+    }
+
+    // 随机获取一个名字 (用于滚动刷新)
+    function getRandomStudentName() {
+        if (studentsList.length === 0) return "🎓 无学生";
+        const randomIndex = Math.floor(Math.random() * studentsList.length);
+        return studentsList[randomIndex];
+    }
+
+    // 启动滚动动画 (快速刷新)
+    function startRolling() {
+        // 如果当前没有学生，无法滚动
+        if (studentsList.length === 0) {
+            rollingNameDiv.innerText = "⚠️ 请先添加学生";
+            rollingNameDiv.classList.remove('highlight-name');
+            return;
+        }
+        // 如果已在滚动中，不做重复启动
+        if (isRolling) return;
+        // 清除之前的定格高亮样式
+        rollingNameDiv.classList.remove('highlight-name');
+        // 启动计时器 每 60ms 更换一次名字，制造流畅快速滚动效果
+        if (rollingInterval) clearInterval(rollingInterval);
+        rollingInterval = setInterval(() => {
+            if (studentsList.length > 0) {
+                const freshName = getRandomStudentName();
+                rollingNameDiv.innerText = freshName;
+            } else {
+                // 若滚动过程中突然被清空，就停止滚动并显示警告
+                if (studentsList.length === 0) {
+                    stopRollingAndClearTimer();
+                    rollingNameDiv.innerText = "✨ 名单为空 ✨";
+                    rollingNameDiv.classList.remove('highlight-name');
+                }
+            }
+        }, 55); // 55ms 快速变化类似抽奖
+        isRolling = true;
+    }
+
+    // 停止点名: 停止计时器，高亮当前显示的名字
+    function stopRollingAndHighlight() {
+        if (!isRolling) {
+            // 如果不在滚动状态但想停止，也可以做高亮当前已显示的内容（增强体验）
+            if (studentsList.length > 0 && rollingNameDiv.innerText !== "🎓 无学生" && rollingNameDiv.innerText !== "⚠️ 请先添加学生" && rollingNameDiv.innerText !== "✨ 名单为空 ✨" && rollingNameDiv.innerText !== "📌 暂无名单") {
+                // 确保当前显示的文本在列表中，高亮即可
+                const currentName = rollingNameDiv.innerText;
+                if (studentsList.includes(currentName)) {
+                    rollingNameDiv.classList.add('highlight-name');
+                } else {
+                    // 若显示的名字异常(比如被删除了), 则随机抽取一名高亮
+                    if (studentsList.length > 0) {
+                        const randomExist = studentsList[Math.floor(Math.random() * studentsList.length)];
+                        rollingNameDiv.innerText = randomExist;
+                        rollingNameDiv.classList.add('highlight-name');
+                    } else {
+                        rollingNameDiv.innerText = "📭 无学生数据";
+                    }
+                }
+            } else if (studentsList.length > 0) {
+                // 可能占位文字, 主动显示第一人并高亮
+                const firstName = studentsList[0];
+                rollingNameDiv.innerText = firstName;
+                rollingNameDiv.classList.add('highlight-name');
+            } else {
+                rollingNameDiv.innerText = "👥 无学生名单";
+                rollingNameDiv.classList.remove('highlight-name');
+            }
+            return;
+        }
+
+        // 停止计时器
+        if (rollingInterval) {
+            clearInterval(rollingInterval);
+            rollingInterval = null;
+        }
+        isRolling = false;
+
+        // 获取当前屏幕显示的名字（最后一次滚动的结果）
+        let currentDisplay = rollingNameDiv.innerText;
+        // 确保当前显示的名字真实存在于学生列表中，如果不是（边界如空），处理
+        if (studentsList.length > 0) {
+            if (!studentsList.includes(currentDisplay) || currentDisplay === "🎓 无学生" || currentDisplay === "⚠️ 请先添加学生") {
+                // 随机抽取一名作为最终点名结果
+                const finalName = studentsList[Math.floor(Math.random() * studentsList.length)];
+                rollingNameDiv.innerText = finalName;
+                currentDisplay = finalName;
+            }
+            // 添加高亮class
+            rollingNameDiv.classList.add('highlight-name');
+        } else {
+            rollingNameDiv.innerText = "❌ 暂无学生信息";
+            rollingNameDiv.classList.remove('highlight-name');
+        }
+    }
+
+    // 清空所有名单 (重置)
+    function clearAllStudents() {
+        // 停止任何滚动
+        if (isRolling) {
+            stopRollingAndClearTimer();
+        }
+        studentsList = [];
+        renderStudentList();
+        rollingNameDiv.innerText = "✨ 名单已清空 ✨";
+        rollingNameDiv.classList.remove('highlight-name');
+    }
+
+    // 重置为默认学生列表（并且保留原有默认名单不丢失，同时不失原始功能，老师也可以一键恢复默认）
+    function resetToDefaultList() {
+        if (isRolling) {
+            stopRollingAndClearTimer();
+        }
+        studentsList = [...DEFAULT_STUDENTS];
+        renderStudentList();
+        // 停止后显示第一个学生
+        if (studentsList.length > 0) {
+            rollingNameDiv.innerText = studentsList[0];
+        } else {
+            rollingNameDiv.innerText = "📋 默认名单为空";
+        }
+        rollingNameDiv.classList.remove('highlight-name');
+    }
+
+    // 添加学生 (手动输入)
+    function addStudent() {
+        let newName = studentNameInput.value.trim();
+        if (newName === "") {
+            alert("请输入学生姓名～");
+            return;
+        }
+        // 防止添加重复（可加可不加，但教室环境避免同名尴尬? 留作可选，但为了保证点名公平，允许同名，无限制）
+        // 更严谨：可提示，但先实现无限制，更自由
+        studentsList.push(newName);
+        renderStudentList();
+        studentNameInput.value = "";   // 清空输入框
+        studentNameInput.focus();
+        // 如果当前没有滚动且之前显示占位符，则将显示更新为新添加的最后一名或者首位？为了体验，静态下若点名区域没有高亮且显示无学生时可更新为首个学生
+        if (!isRolling && studentsList.length > 0) {
+            // 如果当前显示的文本是提示文字, 则更新为最新名单第一位
+            const placeholderTexts = ["✨ 名单已清空 ✨", "👥 无学生名单", "📌 暂无名单", "❌ 暂无学生信息", "🎓 无学生", "⚠️ 请先添加学生", "✨ 点名器 ✨"];
+            if (placeholderTexts.includes(rollingNameDiv.innerText) || rollingNameDiv.innerText.includes("无学生")) {
+                rollingNameDiv.innerText = studentsList[0];
+                rollingNameDiv.classList.remove('highlight-name');
+            }
+        } else if (!isRolling && studentsList.length === 1) {
+            // 从无到有
+            rollingNameDiv.innerText = studentsList[0];
+            rollingNameDiv.classList.remove('highlight-name');
+        }
+    }
+
+    // 软重置说明：基于题目"清空所有名单重新添加" 已经实现globalClear，但softResetBtn用于重置回题目提供的默认班级名单（方便演示）
+    // 老师想一键恢复原始名单可以点这个，避免重新一个个输入
+    function softResetToDefault() {
+        if (confirm("重置为原始班级名单（包含聂晓宇等全部同学）？当前名单将被替换。")) {
+            resetToDefaultList();
+        }
+    }
+
+    // ---------- 事件绑定 ----------
+    startBtn.addEventListener('click', startRolling);
+    stopBtn.addEventListener('click', stopRollingAndHighlight);
+    globalClearBtn.addEventListener('click', () => {
+        if (studentsList.length > 0 && confirm("⚠️ 清空所有学生名单，不可撤销，确定吗？")) {
+            clearAllStudents();
+        } else if (studentsList.length === 0) {
+            alert("名单已经是空的啦～");
+        }
+    });
+    addStudentBtn.addEventListener('click', addStudent);
+    studentNameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addStudent();
+    });
+    softResetBtn.addEventListener('click', softResetToDefault);
+
+    // 初始化: 载入默认学生列表
+    function init() {
+        studentsList = [...DEFAULT_STUDENTS];
+        renderStudentList();
+        if (studentsList.length > 0) {
+            rollingNameDiv.innerText = studentsList[0];
+        } else {
+            rollingNameDiv.innerText = "🎓 点名系统就绪";
+        }
+        rollingNameDiv.classList.remove('highlight-name');
+        isRolling = false;
+        if (rollingInterval) clearInterval(rollingInterval);
+        rollingInterval = null;
+    }
+
+    init();
+</script>
+</body>
+</html>

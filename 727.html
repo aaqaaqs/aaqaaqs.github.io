@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>神秘罗盘 · 隐藏名单点名系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 20% 30%, #0a0f1e, #03060c);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, sans-serif;
+            padding: 20px;
+            position: relative;
+        }
+
+        /* 主容器 - 神秘卡片风格 */
+        .mystic-container {
+            max-width: 1200px;
+            width: 100%;
+            background: rgba(10, 20, 30, 0.65);
+            backdrop-filter: blur(12px);
+            border-radius: 72px;
+            padding: 30px 32px 42px;
+            border: 1px solid rgba(255, 215, 150, 0.35);
+            box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            transition: all 0.3s;
+        }
+
+        /* 点名核心区域 - 聚光灯效果 */
+        .oracle-spot {
+            background: #03070f;
+            border-radius: 60px;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            box-shadow: 0 0 0 2px rgba(255, 200, 100, 0.2), inset 0 0 40px rgba(0, 0, 0, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .oracle-spot::before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,180,60,0.08) 0%, transparent 70%);
+            animation: rotateGlow 20s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes rotateGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .name-screen {
+            text-align: center;
+            min-height: 220px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        #rollingName {
+            font-size: 4.8rem;
+            font-weight: 800;
+            letter-spacing: 6px;
+            font-family: 'Segoe UI', 'Poppins', system-ui;
+            background: linear-gradient(135deg, #F9E0A0, #FFB347, #FFD966);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 15px rgba(255, 160, 60, 0.5);
+            transition: all 0.08s ease;
+            word-break: break-word;
+            padding: 0 20px;
+        }
+
+        /* 高亮定格时的华丽特效 */
+        .highlight-name {
+            background: linear-gradient(135deg, #FFE6B0, #FFA559, #FF6F3C);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 25px #ff9f4a, 0 0 5px rgba(255, 100, 0, 0.8);
+            animation: destinyBurst 0.45s cubic-bezier(0.2, 1.2, 0.4, 1);
+        }
+
+        @keyframes destinyBurst {
+            0% { transform: scale(1); letter-spacing: 6px; opacity: 0.7; filter: blur(1px);}
+            40% { transform: scale(1.08); letter-spacing: 12px; text-shadow: 0 0 35px gold; }
+            100% { transform: scale(1); letter-spacing: 6px; filter: blur(0);}
+        }
+
+        /* 按钮组 */
+        .ritual-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 45px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 14px 32px;
+            border: none;
+            border-radius: 80px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            background: #1e2a2f;
+            color: #f5e7d3;
+            box-shadow: 0 5px 0 #0f171c;
+            letter-spacing: 2px;
+            font-family: inherit;
+            backdrop-filter: blur(5px);
+        }
+
+        .btn-start {
+            background: #3f2b1d;
+            box-shadow: 0 5px 0 #2a1a0f;
+            border-bottom: 2px solid #e0a158;
+        }
+        .btn-start:hover {
+            background: #5f3e28;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #2a1a0f;
+        }
+        .btn-stop {
+            background: #5e2c2a;
+            box-shadow: 0 5px 0 #3e1a18;
+            border-bottom: 2px solid #ff8a5c;
+        }
+        .btn-stop:hover {
+            background: #834138;
+            transform: translateY(-2px);
+        }
+        .btn-clear {
+            background: #2a3a44;
+            box-shadow: 0 5px 0 #16222b;
+        }
+        .btn-clear:hover {
+            background: #3e5768;
+            transform: translateY(-2px);
+        }
+
+        /* 隐藏名单管理区 — 折叠/展开设计，默认半透明模糊，老师可编辑但学生看不清具体名字 */
+        .hidden-realm {
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(16px);
+            border-radius: 48px;
+            padding: 18px 24px 24px;
+            border: 1px solid rgba(210, 180, 140, 0.4);
+            transition: 0.3s;
+        }
+
+        .realm-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 18px;
+            cursor: pointer;
+            border-bottom: 1px dashed rgba(255, 200, 120, 0.5);
+            padding-bottom: 12px;
+        }
+
+        .title-icon {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #f7d89c;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .lock-badge {
+            background: #2c241a;
+            padding: 4px 14px;
+            border-radius: 60px;
+            font-size: 0.75rem;
+            color: #ffcd94;
+            font-family: monospace;
+        }
+
+        .toggle-hint {
+            color: #b9aa88;
+            font-size: 0.8rem;
+        }
+
+        /* 名单区域默认模糊/遮掩效果，真正隐藏名单内容，只有管理员点击显示才可见 */
+        .blurred-list {
+            filter: blur(5px);
+            transition: filter 0.2s ease;
+            cursor: pointer;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 32px;
+            padding: 8px;
+        }
+
+        .blurred-list.revealed {
+            filter: blur(0px);
+        }
+
+        .student-list-container {
+            max-height: 280px;
+            overflow-y: auto;
+            padding: 12px 12px;
+        }
+
+        .student-tag {
+            display: inline-block;
+            background: #121d26;
+            color: #eeddbb;
+            padding: 6px 18px;
+            margin: 6px 8px;
+            border-radius: 40px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-left: 3px solid #f3b35e;
+            box-shadow: 0 1px 3px black;
+            transition: 0.1s;
+        }
+
+        .empty-list-msg {
+            color: #acb8c5;
+            text-align: center;
+            padding: 28px;
+            font-style: italic;
+            filter: blur(0px) !important;
+        }
+
+        .input-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin: 18px 0 20px;
+        }
+
+        .student-input {
+            flex: 4;
+            padding: 14px 22px;
+            font-size: 1rem;
+            border-radius: 60px;
+            border: none;
+            background: #1e292f;
+            color: #f9efdb;
+            font-weight: 500;
+            outline: none;
+            transition: 0.2s;
+            font-family: monospace;
+        }
+
+        .student-input:focus {
+            background: #2a3a40;
+            box-shadow: 0 0 0 2px #f5b45a;
+        }
+
+        .btn-add {
+            background: #3f5c4a;
+            box-shadow: 0 4px 0 #263f2f;
+            padding: 0 28px;
+            font-size: 1.1rem;
+        }
+
+        .btn-add:hover {
+            background: #5a7e64;
+        }
+
+        .info-stats {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 12px 0 8px;
+        }
+
+        .badge-secret {
+            background: #000000aa;
+            padding: 4px 16px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            color: #ffcf9a;
+        }
+
+        .reveal-btn {
+            background: none;
+            border: 1px solid #f3b35e;
+            color: #f3b35e;
+            padding: 5px 18px;
+            border-radius: 60px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: 0.2s;
+        }
+
+        .reveal-btn:hover {
+            background: #f3b35e20;
+            border-color: #ffd58c;
+        }
+
+        /* 滚动条 */
+        .student-list-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .student-list-container::-webkit-scrollbar-track {
+            background: #09161e;
+            border-radius: 8px;
+        }
+        .student-list-container::-webkit-scrollbar-thumb {
+            background: #e2a35c;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 700px) {
+            #rollingName {
+                font-size: 2.4rem;
+            }
+            .btn {
+                padding: 8px 20px;
+                font-size: 1.1rem;
+            }
+            .name-screen {
+                min-height: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="mystic-container">
+    <!-- 点名仪式区 -->
+    <div class="oracle-spot">
+        <div class="name-screen">
+            <div id="rollingName">✨ 秘卷点名 ✨</div>
+        </div>
+    </div>
+
+    <div class="ritual-bar">
+        <button class="btn btn-start" id="startBtn">🌀 开始滚动</button>
+        <button class="btn btn-stop" id="stopBtn">⚡ 揭晓点名</button>
+        <button class="btn btn-clear" id="globalClearBtn">🗲 清空秘册</button>
+    </div>
+
+    <!-- 隐藏名单区域 - 初始模糊，教师可点击眼睛显示真实名单 -->
+    <div class="hidden-realm">
+        <div class="realm-header" id="toggleRevealHeader">
+            <div class="title-icon">
+                📜 天命之册 · 隐藏花名
+                <span class="lock-badge" id="lockIcon">🔒 已隐匿</span>
+            </div>
+            <div class="toggle-hint">
+                <button class="reveal-btn" id="revealListBtn" type="button">👁️ 显示/隐藏名单</button>
+            </div>
+        </div>
+
+        <!-- 模糊名单容器 -->
+        <div id="blurWrapper" class="blurred-list">
+            <div class="info-stats">
+                <span class="badge-secret" id="studentCountBadge">📖 0 位学子</span>
+                <span style="font-size:0.7rem; color:#bfa67a;">⚡ 仅教师可查看，单击👆眼睛解锁</span>
+            </div>
+            <div class="student-list-container" id="studentListContainer">
+                <div class="empty-list-msg">🔮 暂无名录，添加学生后将隐匿显示</div>
+            </div>
+        </div>
+
+        <!-- 添加学生输入区 (依然可操作，但名单模糊直到解锁) -->
+        <div class="input-group">
+            <input type="text" id="studentNameInput" class="student-input" placeholder="输入新秀姓名 (例: 南宫问天)" autocomplete="off">
+            <button class="btn btn-add" id="addStudentBtn">➕ 添入秘册</button>
+        </div>
+        <div style="display: flex; justify-content: flex-end; margin-top: 6px;">
+            <button id="resetDefaultBtn" class="reveal-btn" style="border-color:#7c8a6e; color:#cbbb8b;">📖 恢复原始隐藏班级</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================= 原始完整学生名单 (内容完全隐藏，但实际点名使用) =====================
+    const FULL_DEFAULT_LIST = [
+        "聂晓宇", "桂祁丹", "刘柏琳", "郑瀚", "伍飞翔", "刘淳", "谢青霖", "陈相东", "邓佳欣", "郑琪琳",
+        "邓雅乐", "黄帅", "周宇浩", "唐静雯", "李嘉敏", "唐骏涛", "唐雨菲", "杨章楠", "李文兴", "黄子涵",
+        "周彬彬", "曾子璇", "肖鸿瑞", "张芷萱", "周森", "邓力荣", "唐雨涵", "朱佳辉", "陈禹帆", "汪周杰",
+        "于文豪", "周纵", "欧科辰", "王露灵", "杨皓轩", "蒋力弘", "许瑞嘉", "李欣颖", "李嘉厚", "周旸",
+        "邹浪", "谢晓锋", "谭祁轩", "冯佳欣", "匡琦", "桂旭咏", "王屹东", "奉卓翼", "文嘉豪",
+        "周威翔", "蒋昊辰", "郭菁", "贺卓帆", "唐荣承", "杨正茂", "曾栩勤", "朱永斌", "高林峰"
+    ];
+
+    // 全局变量
+    let studentsList = [];          // 实际学生数组
+    let rollingInterval = null;
+    let isRolling = false;
+    let isListRevealed = false;     // 名单模糊开关（隐藏/显示）
+
+    // DOM 元素
+    const rollingNameDiv = document.getElementById('rollingName');
+    const startBtn = document.getElementById('startBtn');
+    const stopBtn = document.getElementById('stopBtn');
+    const globalClearBtn = document.getElementById('globalClearBtn');
+    const addStudentBtn = document.getElementById('addStudentBtn');
+    const studentNameInput = document.getElementById('studentNameInput');
+    const studentListContainer = document.getElementById('studentListContainer');
+    const studentCountBadge = document.getElementById('studentCountBadge');
+    const resetDefaultBtn = document.getElementById('resetDefaultBtn');
+    const revealListBtn = document.getElementById('revealListBtn');
+    const blurWrapper = document.getElementById('blurWrapper');
+    const lockIconSpan = document.getElementById('lockIcon');
+
+    // ---------- 渲染学生列表 (根据隐藏模式加上模糊滤镜) ----------
+    function renderStudentList() {
+        if (!studentListContainer) return;
+        if (studentsList.length === 0) {
+            studentListContainer.innerHTML = `<div class="empty-list-msg">🌙 秘册空空，请增添门徒</div>`;
+            studentCountBadge.innerText = `📖 0 位学子`;
+            return;
+        }
+        let html = '';
+        studentsList.forEach((name, idx) => {
+            html += `
+                <span class="student-tag" data-name="${escapeHtml(name)}">
+                    ${escapeHtml(name)}
+                    <span class="delete-student-btn" data-name="${escapeHtml(name)}" style="margin-left: 10px; cursor: pointer; font-weight: bold; color: #ffaa77; font-size: 0.9rem; display: inline-block;">🗑️</span>
+                </span>
+            `;
+        });
+        studentListContainer.innerHTML = html;
+        studentCountBadge.innerText = `📖 ${studentsList.length} 位学子`;
+
+        // 绑定删除事件（每个删除按钮）
+        document.querySelectorAll('.delete-student-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const nameToDel = btn.getAttribute('data-name');
+                if (nameToDel) {
+                    removeStudentByName(nameToDel);
+                }
+            });
+        });
+    }
+
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // 删除学生
+    function removeStudentByName(name) {
+        const index = studentsList.indexOf(name);
+        if (index !== -1) {
+            studentsList.splice(index, 1);
+            if (studentsList.length === 0 && isRolling) {
+                stopRollingAndClearTimer();
+                rollingNameDiv.innerText = "🕯️ 无学子待召";
+                rollingNameDiv.classList.remove('highlight-name');
+            }
+            renderStudentList();
+            if (!isRolling) {
+                updateStaticDisplaySafe();
+            }
+        }
+    }
+
+    function stopRollingAndClearTimer() {
+        if (rollingInterval) {
+            clearInterval(rollingInterval);
+            rollingInterval = null;
+        }
+        isRolling = false;
+    }
+
+    function updateStaticDisplaySafe() {
+        if (!isRolling) {
+            if (studentsList.length > 0) {
+                rollingNameDiv.innerText = studentsList[0];
+            } else {
+                rollingNameDiv.innerText = "📜 暂无学子";
+            }
+            rollingNameDiv.classList.remove('highlight-name');
+        }
+    }
+
+    // 随机获取名字 (滚动用)
+    function getRandomName() {
+        if (studentsList.length === 0) return "✨ 虚位以待";
+        return studentsList[Math.floor(Math.random() * studentsList.length)];
+    }
+
+    // 开始滚动
+    function startRolling() {
+        if (studentsList.length === 0) {
+            rollingNameDiv.innerText = "⚠️ 请先添加学子";
+            rollingNameDiv.classList.remove('highlight-name');
+            return;
+        }
+        if (isRolling) return;
+        rollingNameDiv.classList.remove('highlight-name');
+        if (rollingInterval) clearInterval(rollingInterval);
+        rollingInterval = setInterval(() => {
+            if (studentsList.length > 0) {
+                rollingNameDiv.innerText = getRandomName();
+            } else {
+                stopRollingAndClearTimer();
+                rollingNameDiv.innerText = "无学生名单";
+                rollingNameDiv.classList.remove('highlight-name');
+            }
+        }, 55);
+        isRolling = true;
+    }
+
+    // 停止点名+高亮定格
+    function stopAndHighlight() {
+        if (!isRolling) {
+            // 如果未滚动但手动定格: 确保当前显示的名字在列表中并且高亮
+            const currentName = rollingNameDiv.innerText;
+            if (studentsList.length > 0) {
+                if (studentsList.includes(currentName)) {
+                    rollingNameDiv.classList.add('highlight-name');
+                } else {
+                    const validName = studentsList[Math.floor(Math.random() * studentsList.length)];
+                    rollingNameDiv.innerText = validName;
+                    rollingNameDiv.classList.add('highlight-name');
+                }
+            } else {
+                rollingNameDiv.innerText = "无法点名，秘册为空";
+                rollingNameDiv.classList.remove('highlight-name');
+            }
+            return;
+        }
+        // 正在滚动则停止
+        if (rollingInterval) {
+            clearInterval(rollingInterval);
+            rollingInterval = null;
+        }
+        isRolling = false;
+        let displayNow = rollingNameDiv.innerText;
+        if (studentsList.length > 0) {
+            if (!studentsList.includes(displayNow) || displayNow === "✨ 虚位以待") {
+                displayNow = studentsList[Math.floor(Math.random() * studentsList.length)];
+                rollingNameDiv.innerText = displayNow;
+            }
+            rollingNameDiv.classList.add('highlight-name');
+        } else {
+            rollingNameDiv.innerText = "❌ 无学生信息";
+            rollingNameDiv.classList.remove('highlight-name');
+        }
+    }
+
+    // 清空所有学生
+    function clearAll() {
+        if (isRolling) stopRollingAndClearTimer();
+        studentsList = [];
+        renderStudentList();
+        rollingNameDiv.innerText = "🗲 名单已归零";
+        rollingNameDiv.classList.remove('highlight-name');
+    }
+
+    // 重置默认 (隐藏的原始名单)
+    function resetToOriginal() {
+        if (isRolling) stopRollingAndClearTimer();
+        studentsList = [...FULL_DEFAULT_LIST];
+        renderStudentList();
+        if (studentsList.length > 0) {
+            rollingNameDiv.innerText = studentsList[0];
+        } else {
+            rollingNameDiv.innerText = "🎓 原始名录加载";
+        }
+        rollingNameDiv.classList.remove('highlight-name');
+    }
+
+    // 添加学生
+    function addStudentLogic() {
+        let newName = studentNameInput.value.trim();
+        if (newName === "") {
+            alert("请输入学生姓名");
+            return;
+        }
+        studentsList.push(newName);
+        renderStudentList();
+        studentNameInput.value = "";
+        if (!isRolling && studentsList.length > 0) {
+            const placeholderTexts = ["🗲 名单已归零", "📜 暂无学子", "⚠️ 请先添加学子", "✨ 秘卷点名 ✨", "无法点名，秘册为空", "❌ 无学生信息"];
+            if (placeholderTexts.includes(rollingNameDiv.innerText) || rollingNameDiv.innerText.includes("无学生")) {
+                rollingNameDiv.innerText = studentsList[0];
+                rollingNameDiv.classList.remove('highlight-name');
+            }
+        } else if (!isRolling && studentsList.length === 1) {
+            rollingNameDiv.innerText = studentsList[0];
+            rollingNameDiv.classList.remove('highlight-name');
+        }
+    }
+
+    // ---------- 名单隐藏/显示功能 (核心：仅教师操作可见真实姓名) ----------
+    function toggleListVisibility() {
+        isListRevealed = !isListRevealed;
+        if (isListRevealed) {
+            blurWrapper.classList.add('revealed');
+            lockIconSpan.innerHTML = "🔓 已显影";
+            lockIconSpan.style.color = "#f5bc70";
+        } else {
+            blurWrapper.classList.remove('revealed');
+            lockIconSpan.innerHTML = "🔒 已隐匿";
+            lockIconSpan.style.color = "#ffcd94";
+        }
+    }
+
+    // 初始化显示状态: 默认模糊隐藏 (保护隐私)
+    function initHiddenMode() {
+        blurWrapper.classList.remove('revealed');   // 确保默认是模糊滤镜
+        isListRevealed = false;
+        lockIconSpan.innerHTML = "🔒 已隐匿";
+    }
+
+    // 事件绑定
+    startBtn.addEventListener('click', startRolling);
+    stopBtn.addEventListener('click', stopAndHighlight);
+    globalClearBtn.addEventListener('click', () => {
+        if (studentsList.length > 0 && confirm("⚠️ 彻底清空花名册，所有学子将被移除。确定吗？")) {
+            clearAll();
+        } else if (studentsList.length === 0) {
+            alert("秘册已是空白");
+        }
+    });
+    addStudentBtn.addEventListener('click', addStudentLogic);
+    studentNameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addStudentLogic();
+    });
+    resetDefaultBtn.addEventListener('click', () => {
+        if (confirm("重置为原始隐藏班级 (包含所有初始学生)？当前名单将被覆盖。")) {
+            resetToOriginal();
+        }
+    });
+    revealListBtn.addEventListener('click', toggleListVisibility);
+
+    // 启动系统
+    function init() {
+        studentsList = [...FULL_DEFAULT_LIST];
+        renderStudentList();
+        if (studentsList.length > 0) rollingNameDiv.innerText = studentsList[0];
+        else rollingNameDiv.innerText = "点名罗盘";
+        rollingNameDiv.classList.remove('highlight-name');
+        isRolling = false;
+        if (rollingInterval) clearInterval(rollingInterval);
+        rollingInterval = null;
+        initHiddenMode();  // 默认名单区域模糊不可见，保护隐私
+    }
+
+    init();
+</script>
+</body>
+</html>

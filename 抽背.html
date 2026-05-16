@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>翰林抽背 · 任务罗盘 | 课堂随机识记系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* 避免教室投影时鼠标拖动干扰 */
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1e3c2c 0%, #0a2a1f 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', 'Poppins', 'Noto Serif SC', 'Roboto', system-ui, serif;
+            padding: 24px;
+        }
+
+        /* 主卡片：书简风格 */
+        .scroll-container {
+            max-width: 1300px;
+            width: 100%;
+            background: rgba(245, 240, 225, 0.92);
+            backdrop-filter: blur(3px);
+            border-radius: 56px;
+            padding: 28px 32px 40px;
+            box-shadow: 0 30px 45px rgba(0, 0, 0, 0.4), inset 0 1px 4px rgba(255, 255, 200, 0.6);
+            border: 1px solid #e9d6a7;
+        }
+
+        /* 抽背聚光灯区 */
+        .task-arena {
+            background: #fef5e3;
+            border-radius: 52px;
+            margin-bottom: 38px;
+            padding: 42px 24px;
+            box-shadow: inset 0 2px 12px rgba(85, 55, 25, 0.15), 0 12px 24px rgba(0, 0, 0, 0.2);
+            border: 1px solid #ffecb3;
+        }
+
+        .task-screen {
+            text-align: center;
+            min-height: 210px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #rollingTask {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #2c2418;
+            background: linear-gradient(145deg, #3e2a1f, #5c3e2a);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 2px 2px 12px rgba(255,215,140,0.6);
+            transition: all 0.06s ease;
+            line-height: 1.4;
+            word-break: break-word;
+            font-family: 'Segoe UI', 'Noto Serif SC', serif;
+            padding: 0 12px;
+        }
+
+        /* 高亮定格 金榜题名风格 */
+        .highlight-task {
+            background: linear-gradient(135deg, #c97e3a, #f5b041, #e67e22);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 18px #ffcd94;
+            animation: imperialPulse 0.45s cubic-bezier(0.2, 1.1, 0.4, 1);
+        }
+
+        @keyframes imperialPulse {
+            0% { transform: scale(1); letter-spacing: 2px; opacity: 0.85; }
+            40% { transform: scale(1.05); letter-spacing: 6px; text-shadow: 0 0 28px #ffae42; }
+            100% { transform: scale(1); letter-spacing: 2px; }
+        }
+
+        /* 按钮区域 */
+        .ritual-panel {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin-bottom: 48px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            font-size: 1.4rem;
+            font-weight: 600;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: 0.2s ease;
+            background: #2f3e2e;
+            color: #fff6e5;
+            box-shadow: 0 5px 0 #1b2a1a;
+            letter-spacing: 2px;
+            font-family: inherit;
+        }
+
+        .btn-roll {
+            background: #b45f2b;
+            box-shadow: 0 5px 0 #6e3a18;
+        }
+        .btn-roll:hover {
+            background: #cf763c;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #6e3a18;
+        }
+        .btn-stop {
+            background: #8b3c2c;
+            box-shadow: 0 5px 0 #56221a;
+        }
+        .btn-stop:hover {
+            background: #b24d38;
+            transform: translateY(-2px);
+        }
+        .btn-clear {
+            background: #4d5d4a;
+            box-shadow: 0 5px 0 #2c3a2a;
+        }
+        .btn-clear:hover {
+            background: #6b7e66;
+            transform: translateY(-2px);
+        }
+
+        /* 任务编辑器 */
+        .task-editor {
+            background: #fcf7ef;
+            border-radius: 44px;
+            padding: 24px 28px;
+            border: 1px solid #eadbbe;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #5d3a1e;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-left: 8px solid #e0a458;
+            padding-left: 20px;
+        }
+
+        .input-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .task-input {
+            flex: 5;
+            padding: 14px 24px;
+            font-size: 1rem;
+            border-radius: 48px;
+            border: 1px solid #d6c29d;
+            background: #fffaf2;
+            font-family: 'Segoe UI', 'Noto Serif SC', monospace;
+            font-weight: 500;
+            outline: none;
+            transition: 0.2s;
+        }
+        .task-input:focus {
+            border-color: #e0a458;
+            box-shadow: 0 0 0 3px rgba(224, 164, 88, 0.3);
+        }
+
+        .btn-add {
+            background: #5d7a5c;
+            box-shadow: 0 4px 0 #385238;
+            padding: 0 32px;
+            font-size: 1.2rem;
+        }
+        .btn-add:hover {
+            background: #7f9e7a;
+        }
+
+        /* 任务列表 (抽背库) */
+        .task-list-container {
+            max-height: 280px;
+            overflow-y: auto;
+            background: #fdf3e2;
+            border-radius: 32px;
+            padding: 16px 18px;
+            margin-top: 12px;
+            border: 1px solid #eedbba;
+        }
+
+        .task-tag {
+            display: inline-block;
+            background: #f4e8d8;
+            color: #4a3520;
+            padding: 8px 22px;
+            margin: 8px 12px;
+            border-radius: 48px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: 0.1s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            cursor: default;
+            border-left: 5px solid #e0a458;
+            font-family: 'Segoe UI', system-ui;
+        }
+        .task-tag:hover {
+            background: #f3e2cb;
+            transform: scale(1.02);
+        }
+
+        .delete-task {
+            margin-left: 12px;
+            cursor: pointer;
+            font-weight: bold;
+            color: #bc6f3c;
+            font-size: 1rem;
+            display: inline-block;
+            transition: 0.1s;
+        }
+        .delete-task:hover {
+            color: #c0392b;
+            transform: scale(1.1);
+        }
+
+        .empty-msg {
+            color: #a0825a;
+            text-align: center;
+            padding: 28px;
+            font-size: 1.1rem;
+            font-style: italic;
+        }
+
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .badge-count {
+            background: #e9d7bd;
+            padding: 5px 18px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #59462c;
+        }
+
+        .reset-default {
+            background: none;
+            border: 1px solid #bb9a6e;
+            padding: 5px 18px;
+            border-radius: 60px;
+            color: #8b6946;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: 0.2s;
+            font-weight: 500;
+        }
+        .reset-default:hover {
+            background: #ddc8aa;
+            color: #3b2a1a;
+        }
+
+        @media (max-width: 720px) {
+            .scroll-container {
+                padding: 18px;
+            }
+            #rollingTask {
+                font-size: 1.5rem;
+            }
+            .btn {
+                padding: 8px 20px;
+                font-size: 1.1rem;
+            }
+            .task-screen {
+                min-height: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="scroll-container">
+    <!-- 抽背任务高亮区 -->
+    <div class="task-arena">
+        <div class="task-screen">
+            <div id="rollingTask">📖 抽背·翰林院 📖</div>
+        </div>
+    </div>
+
+    <!-- 控制按钮 -->
+    <div class="ritual-panel">
+        <button class="btn btn-roll" id="startRollBtn">🎲 开始滚动</button>
+        <button class="btn btn-stop" id="stopPickBtn">🏆 停止抽背</button>
+        <button class="btn btn-clear" id="clearAllTasksBtn">🗑️ 清空全部任务</button>
+    </div>
+
+    <!-- 任务库管理区域 -->
+    <div class="task-editor">
+        <div class="section-header">
+            📚 识记·抽背任务库
+            <span class="badge-count" id="taskCountBadge">0 项任务</span>
+        </div>
+        <div class="input-row">
+            <input type="text" id="taskInput" class="task-input" placeholder="例如: 背诵《六国论》第三段  或  默写《桂枝香·金陵怀古》" autocomplete="off">
+            <button class="btn btn-add" id="addTaskBtn">➕ 添加任务</button>
+        </div>
+        <div class="info-bar">
+            <span style="font-size:0.8rem; color:#7a6233;">✨ 支持手动添加任意背诵/识记任务，滚动抽取</span>
+            <button id="restoreDefaultTasks" class="reset-default">📜 恢复默认任务清单</button>
+        </div>
+        <div class="task-list-container" id="taskListContainer">
+            <div class="empty-msg">✍️ 暂无任务，请添加抽背项目</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --------------------------------------------------------------
+    // 默认任务集 (根据题目完整安排)
+    const DEFAULT_TASKS = [
+        "背诵《过洞庭》",
+        "背诵《登岳阳楼》",
+        "背诵《金陵怀古》",
+        "背诵《阿房宫赋》第一段",
+        "背诵《阿房宫赋》第二段",
+        "背诵《阿房宫赋》第三段",
+        "背诵《阿房宫赋》第四段",
+        "背诵《谏太宗十思疏》第三段",
+        "背诵《谏太宗十思疏》第二段",
+        "背诵《谏太宗十思疏》第一段",
+        "背诵《答司马谏议书》第一、三段",
+        "背诵《谏太宗十思疏》第二段",   // 重复按照题目保留
+        "背诵《子路、曾皙、冉有、公西华侍坐》1-8段",
+        "背诵《子路、曾皙、冉有、公西华侍坐》9-21段",
+        "背诵《六国论》第一段",
+        "背诵《六国论》第二段",
+        "背诵《六国论》第三段",
+        "背诵《六国论》第四、五段",
+        "背诵《游园》"
+    ];
+
+    // ---------- 全局变量 ----------
+    let tasksList = [];           // 任务数组
+    let rollingInterval = null;
+    let isRolling = false;
+
+    // DOM 元素
+    const rollingTaskDiv = document.getElementById('rollingTask');
+    const startRollBtn = document.getElementById('startRollBtn');
+    const stopPickBtn = document.getElementById('stopPickBtn');
+    const clearAllTasksBtn = document.getElementById('clearAllTasksBtn');
+    const addTaskBtn = document.getElementById('addTaskBtn');
+    const taskInput = document.getElementById('taskInput');
+    const taskListContainer = document.getElementById('taskListContainer');
+    const taskCountBadge = document.getElementById('taskCountBadge');
+    const restoreDefaultTasksBtn = document.getElementById('restoreDefaultTasks');
+
+    // ---------- 辅助函数 ----------
+    // 防XSS简单转义
+    function escapeHtml(str) {
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
+            return c;
+        });
+    }
+
+    // 渲染任务列表 + 更新计数
+    function renderTaskList() {
+        if (!taskListContainer) return;
+        if (tasksList.length === 0) {
+            taskListContainer.innerHTML = `<div class="empty-msg">📭 任务库空空，请添加抽背内容～</div>`;
+            taskCountBadge.innerText = `0 项任务`;
+            return;
+        }
+
+        let html = '';
+        tasksList.forEach((task, idx) => {
+            html += `
+                <span class="task-tag" data-task="${escapeHtml(task)}" data-idx="${idx}">
+                    ${escapeHtml(task)}
+                    <span class="delete-task" data-taskname="${escapeHtml(task)}">✖️</span>
+                </span>
+            `;
+        });
+        taskListContainer.innerHTML = html;
+        taskCountBadge.innerText = `${tasksList.length} 项任务`;
+
+        // 绑定删除事件 (委托)
+        const container = taskListContainer;
+        container.querySelectorAll('.delete-task').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const taskName = btn.getAttribute('data-taskname');
+                if (taskName) {
+                    removeTaskByName(taskName);
+                }
+            });
+        });
+    }
+
+    // 根据任务内容删除
+    function removeTaskByName(taskContent) {
+        const index = tasksList.indexOf(taskContent);
+        if (index !== -1) {
+            tasksList.splice(index, 1);
+            // 如果滚动中并且删完任务 -> 停止滚动并显示占位
+            if (tasksList.length === 0 && isRolling) {
+                stopRollingAndClearTimer();
+                rollingTaskDiv.innerText = "📚 暂无抽背任务";
+                rollingTaskDiv.classList.remove('highlight-task');
+            }
+            renderTaskList();
+            // 如果当前没有滚动，刷新显示合理内容（避免显示已删除的任务）
+            if (!isRolling) {
+                updateStaticTaskDisplay();
+            }
+        }
+    }
+
+    // 停止滚动且清除计时器
+    function stopRollingAndClearTimer() {
+        if (rollingInterval) {
+            clearInterval(rollingInterval);
+            rollingInterval = null;
+        }
+        isRolling = false;
+    }
+
+    // 静态时更新显示 (根据当前任务列表第一个或提示)
+    function updateStaticTaskDisplay() {
+        if (!isRolling) {
+            if (tasksList.length > 0) {
+                rollingTaskDiv.innerText = tasksList[0];
+            } else {
+                rollingTaskDiv.innerText = "🎋 请添加抽背任务";
+            }
+            rollingTaskDiv.classList.remove('highlight-task');
+        }
+    }
+
+    // 随机获取任务 (滚动时用)
+    function getRandomTask() {
+        if (tasksList.length === 0) return "✨ 无待抽任务 ✨";
+        const randomIndex = Math.floor(Math.random() * tasksList.length);
+        return tasksList[randomIndex];
+    }
+
+    // 开始滚动抽选 (快速动画)
+    function startRollingTasks() {
+        if (tasksList.length === 0) {
+            rollingTaskDiv.innerText = "⚠️ 任务列表为空，请添加任务";
+            rollingTaskDiv.classList.remove('highlight-task');
+            return;
+        }
+        if (isRolling) return;  // 已滚动
+        // 移除之前的高亮样式
+        rollingTaskDiv.classList.remove('highlight-task');
+        // 清除旧计时器
+        if (rollingInterval) clearInterval(rollingInterval);
+        rollingInterval = setInterval(() => {
+            if (tasksList.length > 0) {
+                const freshTask = getRandomTask();
+                rollingTaskDiv.innerText = freshTask;
+            } else {
+                // 滚动中任务被清空，停止滚动
+                if (tasksList.length === 0) {
+                    stopRollingAndClearTimer();
+                    rollingTaskDiv.innerText = "📭 任务已清空";
+                    rollingTaskDiv.classList.remove('highlight-task');
+                }
+            }
+        }, 60);  // 60ms 流畅滚动抽选
+        isRolling = true;
+    }
+
+    // 停止滚动并高亮定格当前显示的任务
+    function stopAndHighlightTask() {
+        if (!isRolling) {
+            // 未滚动的情况下，依然可以强化高亮当前显示的任务（若存在该任务）
+            const currentDisplay = rollingTaskDiv.innerText;
+            if (tasksList.length > 0) {
+                // 如果当前显示文字在任务库中，高亮；否则随机抽取一个任务并高亮
+                if (tasksList.includes(currentDisplay) && currentDisplay !== "✨ 无待抽任务 ✨" && currentDisplay !== "⚠️ 任务列表为空，请添加任务") {
+                    rollingTaskDiv.classList.add('highlight-task');
+                } else {
+                    // 随机展示一个有效任务
+                    const validTask = tasksList[Math.floor(Math.random() * tasksList.length)];
+                    rollingTaskDiv.innerText = validTask;
+                    rollingTaskDiv.classList.add('highlight-task');
+                }
+            } else {
+                rollingTaskDiv.innerText = "❓ 无抽背任务可定格";
+                rollingTaskDiv.classList.remove('highlight-task');
+            }
+            return;
+        }
+
+        // 正在滚动中 → 停止计时器
+        if (rollingInterval) {
+            clearInterval(rollingInterval);
+            rollingInterval = null;
+        }
+        isRolling = false;
+
+        // 获取当前屏幕上显示的任务（最后快速滚动的结果）
+        let displayedTask = rollingTaskDiv.innerText;
+        if (tasksList.length > 0) {
+            // 确保定格的任务在任务列表中 (边界纠正)
+            if (!tasksList.includes(displayedTask) || displayedTask === "✨ 无待抽任务 ✨" || displayedTask === "⚠️ 任务列表为空，请添加任务") {
+                const finalPick = tasksList[Math.floor(Math.random() * tasksList.length)];
+                rollingTaskDiv.innerText = finalPick;
+                displayedTask = finalPick;
+            }
+            rollingTaskDiv.classList.add('highlight-task');
+        } else {
+            rollingTaskDiv.innerText = "🏮 暂无任何任务";
+            rollingTaskDiv.classList.remove('highlight-task');
+        }
+    }
+
+    // 清空所有任务
+    function clearAllTasks() {
+        if (isRolling) {
+            stopRollingAndClearTimer();
+        }
+        tasksList = [];
+        renderTaskList();
+        rollingTaskDiv.innerText = "🗑️ 任务库已清空";
+        rollingTaskDiv.classList.remove('highlight-task');
+    }
+
+    // 添加任务 (手动输入)
+    function addNewTask() {
+        let newTask = taskInput.value.trim();
+        if (newTask === "") {
+            alert("请输入抽背/识记任务内容～");
+            return;
+        }
+        // 允许添加相同任务（课堂可重复强化）
+        tasksList.push(newTask);
+        renderTaskList();
+        taskInput.value = "";
+        taskInput.focus();
+
+        // 如果当前没有滚动并且显示区域为占位提示，则更新到第一个任务或新任务
+        if (!isRolling) {
+            const placeholderTexts = ["📖 抽背·翰林院 📖", "🎋 请添加抽背任务", "🗑️ 任务库已清空", "📭 任务已清空", "❓ 无抽背任务可定格", "🏮 暂无任何任务", "⚠️ 任务列表为空，请添加任务"];
+            if (placeholderTexts.includes(rollingTaskDiv.innerText) || rollingTaskDiv.innerText.includes("无抽背")) {
+                if (tasksList.length > 0) {
+                    rollingTaskDiv.innerText = tasksList[0];
+                    rollingTaskDiv.classList.remove('highlight-task');
+                }
+            } else if (tasksList.length === 1 && !isRolling) {
+                rollingTaskDiv.innerText = tasksList[0];
+                rollingTaskDiv.classList.remove('highlight-task');
+            }
+        }
+    }
+
+    // 重置为默认任务 (根据要求指定的所有任务)
+    function resetToDefaultTasks() {
+        if (isRolling) {
+            stopRollingAndClearTimer();
+        }
+        tasksList = [...DEFAULT_TASKS];
+        renderTaskList();
+        if (tasksList.length > 0) {
+            rollingTaskDiv.innerText = tasksList[0];
+        } else {
+            rollingTaskDiv.innerText = "📜 默认任务加载";
+        }
+        rollingTaskDiv.classList.remove('highlight-task');
+    }
+
+    // 辅助删除全部时友好提醒
+    function confirmClearAll() {
+        if (tasksList.length === 0) {
+            alert("任务库已经是空的～");
+            return;
+        }
+        if (confirm("⚠️ 确定清空所有抽背任务吗？所有条目将被移除。")) {
+            clearAllTasks();
+        }
+    }
+
+    // 初始加载 + 绑定事件
+    function init() {
+        // 载入题目提供的完整默认任务
+        tasksList = [...DEFAULT_TASKS];
+        renderTaskList();
+        if (tasksList.length > 0) {
+            rollingTaskDiv.innerText = tasksList[0];
+        } else {
+            rollingTaskDiv.innerText = "🎋 识记抽背系统";
+        }
+        rollingTaskDiv.classList.remove('highlight-task');
+        isRolling = false;
+        if (rollingInterval) clearInterval(rollingInterval);
+        rollingInterval = null;
+
+        // 绑定事件
+        startRollBtn.addEventListener('click', startRollingTasks);
+        stopPickBtn.addEventListener('click', stopAndHighlightTask);
+        clearAllTasksBtn.addEventListener('click', confirmClearAll);
+        addTaskBtn.addEventListener('click', addNewTask);
+        taskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addNewTask();
+        });
+        restoreDefaultTasksBtn.addEventListener('click', () => {
+            if (confirm("重置为原始抽背任务列表（包含过洞庭、六国论等全部默认识记内容）？当前任务将被替换。")) {
+                resetToDefaultTasks();
+            }
+        });
+    }
+
+    init();
+</script>
+</body>
+</html>

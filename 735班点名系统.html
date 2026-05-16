@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>极速狂点名器 · 超炫高亮版</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* 防止拖动文字干扰氛围 */
+        }
+
+        body {
+            min-height: 100vh;
+            background: radial-gradient(circle at 10% 30%, #1a2f2c, #0a1a1f);
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans CJK SC', 'Microsoft YaHei', system-ui, sans-serif;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* 主舞台 - 霓虹街机风格 */
+        .arcade-machine {
+            max-width: 1400px;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(12px);
+            border-radius: 70px 70px 60px 60px;
+            box-shadow: 0 30px 40px rgba(0, 0, 0, 0.6), inset 0 1px 4px rgba(255, 255, 180, 0.4);
+            padding: 1.8rem 2rem 2rem;
+            border: 2px solid #ffcf4a;
+            transition: all 0.2s;
+        }
+
+        /* 闪烁标题区 */
+        .title-zone {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        .title-zone h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #FFE6A3, #FFAA33, #FF6A00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 8px #ffa50066;
+            letter-spacing: 3px;
+            display: inline-block;
+            animation: titlePulse 0.9s infinite alternate;
+        }
+        @keyframes titlePulse {
+            0% { text-shadow: 0 0 0px #ffb347; opacity: 0.9; }
+            100% { text-shadow: 0 0 15px #ffae42; opacity: 1; }
+        }
+        .sub {
+            font-size: 1rem;
+            color: #c2e0ff;
+            background: #00000055;
+            display: inline-block;
+            padding: 4px 18px;
+            border-radius: 60px;
+            backdrop-filter: blur(4px);
+        }
+
+        /* 巨型点名展台 */
+        .spotlight-stage {
+            background: linear-gradient(145deg, #262f2c, #0f1c1a);
+            margin: 20px 0 25px;
+            border-radius: 70px;
+            padding: 2.2rem 1rem;
+            box-shadow: 0 20px 35px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 220, 100, 0.3);
+            border: 1px solid #ffc962;
+            transition: 0.1s;
+        }
+        .name-glory {
+            text-align: center;
+            font-size: 5.2rem;
+            font-weight: 900;
+            letter-spacing: 6px;
+            color: #FFF5CD;
+            text-shadow: 0 0 10px #ff7e05, 0 0 20px #ffaa33, 0 5px 15px black;
+            transition: transform 0.2s cubic-bezier(0.2, 0.9, 0.6, 1.2);
+            word-break: break-word;
+            padding: 0.2em;
+            font-family: 'Segoe UI', 'Poppins', 'Noto Sans CJK SC', monospace;
+        }
+        /* 高亮点名切换特效 */
+        .name-glory.highlight-blast {
+            animation: blastPop 0.4s ease-out forwards;
+        }
+        @keyframes blastPop {
+            0% {
+                text-shadow: 0 0 0px #ffd966, 0 0 0px #ff9100;
+                transform: scale(0.96);
+                color: #fbffc4;
+            }
+            35% {
+                text-shadow: 0 0 25px #ffbb44, 0 0 35px #ff6a00, 0 0 10px #ffcc00;
+                transform: scale(1.1);
+                color: #fff9e6;
+            }
+            100% {
+                text-shadow: 0 0 12px #ff7e05, 0 0 20px #ffaa33, 0 5px 15px black;
+                transform: scale(1);
+                color: #FFF5CD;
+            }
+        }
+
+        /* 快速，更有趣的速度控制栏 */
+        .speed-dashboard {
+            background: rgba(0, 0, 0, 0.65);
+            border-radius: 100px;
+            padding: 0.9rem 1.8rem;
+            margin: 10px 0 25px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            backdrop-filter: blur(16px);
+            border: 1px solid #f6b555;
+        }
+        .speed-panel {
+            background: #1f313d;
+            padding: 5px 20px;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: inset 0 1px 2px #00000044, 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+        .speed-panel span {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #FFE2A4;
+        }
+        .speed-number {
+            background: #010a0f;
+            padding: 4px 18px;
+            border-radius: 36px;
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: #ffc978;
+            min-width: 85px;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        input[type="range"] {
+            width: 300px;
+            height: 7px;
+            -webkit-appearance: none;
+            background: linear-gradient(90deg, #ffb347, #fc4a1a);
+            border-radius: 10px;
+            outline: none;
+            cursor: pointer;
+        }
+        input[type="range"]:focus {
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #FFD966;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px black;
+            cursor: pointer;
+            transition: 0.08s linear;
+        }
+        input[type="range"]::-webkit-slider-thumb:active {
+            transform: scale(1.3);
+            background: #ffb82b;
+        }
+        .speed-tag {
+            font-weight: bold;
+            color: #ffcd94;
+            background: #1f2a2e;
+            padding: 3px 12px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+        }
+
+        /* 三按钮 超级反应 */
+        .button-fleet {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 35px;
+        }
+        .cool-btn {
+            font-size: 1.5rem;
+            font-weight: bold;
+            padding: 12px 32px;
+            border: none;
+            border-radius: 60px;
+            background: #2f455b;
+            color: #fff2cf;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            box-shadow: 0 6px 0 #0f2029;
+            font-family: inherit;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .cool-btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #0f2029;
+        }
+        .btn-go {
+            background: #e67e22;
+            color: white;
+            box-shadow: 0 6px 0 #b45f1b;
+            text-shadow: 0 1px 0 #522f0a;
+        }
+        .btn-go:hover {
+            background: #ff9540;
+            transform: scale(1.02);
+        }
+        .btn-stop {
+            background: #3a6b6b;
+            box-shadow: 0 6px 0 #1e4949;
+        }
+        .btn-stop:hover {
+            background: #4f8b8b;
+        }
+        .btn-lucky {
+            background: #9b4b6e;
+            box-shadow: 0 6px 0 #632e48;
+        }
+        .btn-lucky:hover {
+            background: #c45f88;
+        }
+
+        /* 超大可爱名单区域 */
+        .roster-zone {
+            margin-top: 15px;
+            background: #071d26c9;
+            border-radius: 2.5rem;
+            padding: 0.8rem 1rem 1.2rem;
+            backdrop-filter: blur(3px);
+        }
+        .roster-header {
+            font-size: 1.7rem;
+            font-weight: bold;
+            color: #FFDCA8;
+            margin-bottom: 15px;
+            padding-left: 20px;
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            border-left: 6px solid #ffb85c;
+        }
+        .students-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px 18px;
+            justify-content: center;
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 12px 10px;
+            background: #05222e66;
+            border-radius: 45px;
+        }
+        .name-tile {
+            background: linear-gradient(115deg, #233e48, #18313b);
+            color: #fcf3cf;
+            font-size: 1.25rem;
+            font-weight: 600;
+            padding: 10px 24px;
+            border-radius: 60px;
+            transition: all 0.2s;
+            cursor: pointer;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.4);
+            border: 1px solid #ffcb7a7a;
+            letter-spacing: 2px;
+            backdrop-filter: blur(2px);
+        }
+        /* 当前点名高亮卡片 */
+        .name-tile.highlight-tile {
+            background: radial-gradient(circle at 30% 20%, #ffb347, #ff6a1a);
+            color: #fff9e5;
+            text-shadow: 0 0 6px #ff5e00;
+            box-shadow: 0 0 20px #ffae5a, 0 0 5px #ffcf6e;
+            border-color: #fff0b5;
+            transform: scale(1.03);
+            font-weight: bold;
+        }
+        .students-cloud::-webkit-scrollbar {
+            width: 8px;
+        }
+        .students-cloud::-webkit-scrollbar-track {
+            background: #1b3c48;
+            border-radius: 20px;
+        }
+        .students-cloud::-webkit-scrollbar-thumb {
+            background: #ffa653;
+            border-radius: 20px;
+        }
+
+        .footer-motto {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+            color: #93b7c9;
+        }
+        @media (max-width: 720px) {
+            .arcade-machine {
+                padding: 1rem;
+            }
+            .name-glory {
+                font-size: 2.8rem;
+                letter-spacing: 2px;
+            }
+            .cool-btn {
+                font-size: 1.1rem;
+                padding: 8px 20px;
+            }
+            .name-tile {
+                font-size: 0.9rem;
+                padding: 6px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="arcade-machine">
+    <div class="title-zone">
+        <h1>⚡ 极速狂点名 · 光速高亮 ⚡</h1>
+        <div class="sub">🚀 疯狂闪切 | 大字高亮 | 速度由你掌控 🚀</div>
+    </div>
+
+    <!-- 动态展台 -->
+    <div class="spotlight-stage">
+        <div class="name-glory" id="dynamicName">✨ 点名开启 ✨</div>
+    </div>
+
+    <!-- 速度调节滚轮区 -->
+    <div class="speed-dashboard">
+        <div class="speed-panel">
+            <span>🎚️ 点名速率</span>
+            <div class="speed-number" id="speedStatus">极速⏩</div>
+        </div>
+        <input type="range" id="speedKnob" min="30" max="260" step="5" value="65">
+        <div class="speed-tag">🐆 快如闪电  ← 滚轮调节 →  🐢 慢速大戏</div>
+    </div>
+
+    <!-- 操作按钮组 -->
+    <div class="button-fleet">
+        <button class="cool-btn btn-go" id="activateSpin">🎲 开始狂点 🎲</button>
+        <button class="cool-btn btn-stop" id="freezeSpin">⏸️ 暂停高亮 ⏸️</button>
+        <button class="cool-btn btn-lucky" id="magicPick">✨ 一发入魂 ✨</button>
+    </div>
+
+    <!-- 超大名单册 -->
+    <div class="roster-zone">
+        <div class="roster-header">
+            📢 闪耀全明星 · 点名册 📢 <span style="font-size: 1.1rem;">(共<strong id="totalHeads"></strong>位)</span>
+        </div>
+        <div class="students-cloud" id="studentContainer"></div>
+    </div>
+    <div class="footer-motto">
+        💥 点击下方任意姓名直接点名！滚动调节速度，开始后立即飞速切换，极速高亮动画，字体霸气 💥
+    </div>
+</div>
+
+<script>
+    // ---------- 点名英雄榜（完整名单）----------
+    const heroNames = [
+        "卢梦轩", "袁嘉萱", "周博禺", "周文华", "邓亚晨", "毛丽", "刘乐嘉", "范文馨", "欧阳霖颖", "彭浩霖",
+        "周奕妍", "奉夏阳", "张馨予", "张漫", "唐晶磊", "曾靖岚", "张涛", "刘昊豫", "李瀚", "胡文强",
+        "黄帅", "邓文轩", "周思淇", "蒋妙琳", "王炫琰", "于雅琪", "谢一帆", "田颖", "龚湘玲", "周楚涵",
+        "文骏峰", "黄小娟", "蒋沂吾", "肖雄伟", "何苗苗", "陈珂菡", "曾云湘", "陈宇航", "文沁怡", "文雅琳",
+        "黄欢", "李婧琪", "罗毅", "谢超", "段家杭", "桂自强", "李俊熙", "李健", "曾宇轩", "肖旭廷",
+        "黄子珍", "唐亿可", "汪文健"
+    ];
+
+    // 全局数据
+    let studentList = [];          // 存储对象 { id, name }
+    let rollingTimer = null;
+    let isActiveRoll = false;      // 点名滚动是否激活
+    let currentIndex = 0;          // 当前显示名字在数组的索引
+    let currentDisplayName = "✨ 点名开启 ✨";
+    
+    // DOM 元素
+    const nameGloryDiv = document.getElementById('dynamicName');
+    const studentContainer = document.getElementById('studentContainer');
+    const totalHeadsSpan = document.getElementById('totalHeads');
+    const speedKnob = document.getElementById('speedKnob');
+    const speedStatusSpan = document.getElementById('speedStatus');
+    const startBtn = document.getElementById('activateSpin');
+    const stopBtn = document.getElementById('freezeSpin');
+    const randomMagicBtn = document.getElementById('magicPick');
+
+    // 辅助: 更新速率显示文本 (有趣)
+    function updateSpeedText(msValue) {
+        const val = parseInt(msValue, 10);
+        if (val <= 55) speedStatusSpan.innerText = '⚡ 光速 ⚡';
+        else if (val <= 90) speedStatusSpan.innerText = '🐆 极速模式';
+        else if (val <= 140) speedStatusSpan.innerText = '🚀 快速穿梭';
+        else if (val <= 200) speedStatusSpan.innerText = '🌀 标准节奏';
+        else speedStatusSpan.innerText = '🐢 慢放剧场';
+    }
+
+    // 清除所有卡片高亮class
+    function clearTileHighlights() {
+        document.querySelectorAll('.name-tile').forEach(tile => {
+            tile.classList.remove('highlight-tile');
+        });
+    }
+
+    // 根据名字高亮对应卡片 (名单册)
+    function highlightTileByName(name) {
+        clearTileHighlights();
+        if (!name || name.includes('✨') || name.includes('点名开启')) return;
+        const tiles = document.querySelectorAll('.name-tile');
+        for (let tile of tiles) {
+            if (tile.getAttribute('data-name') === name) {
+                tile.classList.add('highlight-tile');
+                // 让高亮项滚动进入视野（平滑但不会太抢戏）
+                tile.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+                break;
+            }
+        }
+    }
+
+    // 大屏名字 + 高亮动画 + 同步卡片
+    function setDisplayNameWithBlast(name, withAnimation = true) {
+        if (!nameGloryDiv) return;
+        if (withAnimation) {
+            nameGloryDiv.classList.remove('highlight-blast');
+            void nameGloryDiv.offsetWidth;  // 强制重绘
+            nameGloryDiv.innerText = name;
+            nameGloryDiv.classList.add('highlight-blast');
+        } else {
+            nameGloryDiv.innerText = name;
+        }
+        currentDisplayName = name;
+        // 同步高亮卡片列表
+        highlightTileByName(name);
+    }
+
+    // 直接设置无动画 (用于初始化)
+    function setDisplayNameSilent(name) {
+        if (nameGloryDiv) nameGloryDiv.innerText = name;
+        currentDisplayName = name;
+        highlightTileByName(name);
+    }
+
+    // 点名滚动函数：切换到下一位 (循环)
+    function nextNameInRoll() {
+        if (!studentList.length) return;
+        // 更新索引 (循环)
+        currentIndex = (currentIndex + 1) % studentList.length;
+        const nextStudent = studentList[currentIndex];
+        if (nextStudent) {
+            setDisplayNameWithBlast(nextStudent.name, true);
+        }
+    }
+
+    // 刷新定时器（速度改变时，若在滚动中，重置计时器）
+    function refreshRollInterval() {
+        if (!isActiveRoll) return;
+        if (rollingTimer) clearInterval(rollingTimer);
+        const speedMs = parseInt(speedKnob.value, 10);
+        rollingTimer = setInterval(() => {
+            if (isActiveRoll) {
+                nextNameInRoll();
+            }
+        }, speedMs);
+    }
+
+    // 开始点名滚动（快速闪切）
+    function startRollingCall() {
+        if (!studentList.length) {
+            setDisplayNameWithBlast("⚠️ 暂无名单 ⚠️", true);
+            return;
+        }
+        // 如果当前展示内容不属于名单内，则从随机索引开始，确保精彩
+        const belongs = studentList.some(s => s.name === currentDisplayName);
+        if (!belongs || currentDisplayName.includes('✨') || currentDisplayName.includes('点名开启')) {
+            // 随机挑选一个帅气的开场
+            const randIdx = Math.floor(Math.random() * studentList.length);
+            currentIndex = randIdx;
+            setDisplayNameSilent(studentList[randIdx].name);
+        } else {
+            // 同步当前索引
+            const foundIdx = studentList.findIndex(s => s.name === currentDisplayName);
+            if (foundIdx !== -1) currentIndex = foundIdx;
+            else currentIndex = 0;
+        }
+        // 如果已有计时器则清除
+        if (rollingTimer) clearInterval(rollingTimer);
+        isActiveRoll = true;
+        const speedVal = parseInt(speedKnob.value, 10);
+        rollingTimer = setInterval(() => {
+            if (isActiveRoll) nextNameInRoll();
+        }, speedVal);
+    }
+
+    // 停止点名，保留当前高亮名字（并确保最后的高亮动画突出）
+    function stopRollingAndKeep() {
+        if (rollingTimer) {
+            clearInterval(rollingTimer);
+            rollingTimer = null;
+        }
+        isActiveRoll = false;
+        // 确保当前显示的名字再次高亮动画加强定格感
+        if (currentDisplayName && !currentDisplayName.includes('✨') && studentList.length > 0) {
+            // 重新闪烁一下名字彰显停止结果
+            setDisplayNameWithBlast(currentDisplayName, true);
+        } else if (studentList.length > 0 && (currentDisplayName.includes('✨') || currentDisplayName.includes('点名开启'))) {
+            // 极端情况，从未点名过就停止，展示第一位
+            const firstOne = studentList[0].name;
+            setDisplayNameWithBlast(firstOne, true);
+            currentIndex = 0;
+            currentDisplayName = firstOne;
+        }
+    }
+
+    // 随机抽取 (一发入魂) 并且会停止滚动，确保高亮酷炫
+    function randomPickAndStop() {
+        if (!studentList.length) return;
+        // 如果正在点名，先停止点名
+        if (isActiveRoll) {
+            // 停掉轮询
+            if (rollingTimer) clearInterval(rollingTimer);
+            rollingTimer = null;
+            isActiveRoll = false;
+        }
+        const luckyIndex = Math.floor(Math.random() * studentList.length);
+        const luckyName = studentList[luckyIndex].name;
+        // 更新当前索引和展示
+        currentIndex = luckyIndex;
+        setDisplayNameWithBlast(luckyName, true);
+        currentDisplayName = luckyName;
+        // 额外滚动到卡片位置确保高亮
+        highlightTileByName(luckyName);
+    }
+
+    // 速度变动时的回调：更新显示文本 + 如果点名滚动中，动态调整间隔（不用停止再开始，无缝切换快感）
+    function onSpeedChanged() {
+        const newVal = speedKnob.value;
+        updateSpeedText(newVal);
+        if (isActiveRoll && rollingTimer) {
+            // 直接重置定时器实现速度秒切
+            clearInterval(rollingTimer);
+            const ms = parseInt(newVal, 10);
+            rollingTimer = setInterval(() => {
+                if (isActiveRoll) nextNameInRoll();
+            }, ms);
+        }
+    }
+
+    // 构建超大名单册与数据结构
+    function buildGiantRoster() {
+        studentContainer.innerHTML = '';
+        studentList = heroNames.map((name, idx) => ({ id: idx, name: name }));
+        totalHeadsSpan.innerText = studentList.length;
+        studentList.forEach(student => {
+            const tile = document.createElement('div');
+            tile.className = 'name-tile';
+            tile.setAttribute('data-name', student.name);
+            tile.textContent = student.name;
+            // 点击直接点名（超有趣交互）
+            tile.addEventListener('click', (e) => {
+                e.stopPropagation();
+                // 如果正在滚动中，先停止点名，然后显示被点同学，让点名更有掌控感
+                if (isActiveRoll) {
+                    stopRollingAndKeep();    // 停止滚动并保持当前(但我们要直接切到点击的)
+                }
+                // 更新为点击的人名
+                currentIndex = student.id;
+                setDisplayNameWithBlast(student.name, true);
+                currentDisplayName = student.name;
+                // 确保滚动已经被停止，isActiveRoll 已经是 false
+                if (rollingTimer) {
+                    clearInterval(rollingTimer);
+                    rollingTimer = null;
+                }
+                isActiveRoll = false;
+            });
+            studentContainer.appendChild(tile);
+        });
+        // 初始化显示第一位同学，大气
+        if (studentList.length) {
+            const firstStudent = studentList[0].name;
+            setDisplayNameSilent(firstStudent);
+            currentDisplayName = firstStudent;
+            currentIndex = 0;
+        } else {
+            setDisplayNameSilent("🚫 无名册 🚫");
+        }
+    }
+
+    // 监听滚轮事件 —— 附加更有趣的体验: 鼠标在速度滑块区域滚动直接可以调节速度 (原生支持)，同时也显示变更
+    // 并且额外加一个滚轮控制速度小彩蛋: 在页面任意位置按住Alt+滚轮也行？不用过度，但保证滑块体验
+    // 同时也为了满足“有滚轮调节速度”的要求，滑块本身支持滚轮滚动调节哦~~, 再加个全局可选?
+    // 为了保证有趣，让速度滑块支持鼠标滚轮时快速变更 (很多用户自然会在滑块上滚动)
+    // 已经满足，但额外在容器上做一个小功能：虽然没有强制，已经满足“滚轮调节速度”
+    // 额外增加一个细节：鼠标悬浮在速度面板上滚动也可以调节
+    const speedPanelWrapper = document.querySelector('.speed-dashboard');
+    if (speedPanelWrapper) {
+        speedPanelWrapper.addEventListener('wheel', (e) => {
+            // 仅在dashboard区域滚动就调节速度，有趣又丝滑
+            e.preventDefault();
+            let newVal = parseInt(speedKnob.value, 10);
+            if (e.deltaY < 0) {
+                newVal = Math.max(30, newVal - 10);
+            } else {
+                newVal = Math.min(260, newVal + 10);
+            }
+            speedKnob.value = newVal;
+            onSpeedChanged();
+        }, { passive: false });
+    }
+
+    // 监听滑块事件
+    speedKnob.addEventListener('input', (e) => {
+        onSpeedChanged();
+    });
+
+    // 按钮监听
+    startBtn.addEventListener('click', () => {
+        if (studentList.length === 0) return;
+        // 避免重复点击导致多个计时器
+        if (isActiveRoll) {
+            // 如果已经在点名中，可以重置为更快节奏：重新开始点名轮转，更有趣（重启发车）
+            // 先停止再开始，重新焕发酷炫感
+            if (rollingTimer) clearInterval(rollingTimer);
+            isActiveRoll = false;
+            startRollingCall();
+        } else {
+            startRollingCall();
+        }
+    });
+
+    stopBtn.addEventListener('click', () => {
+        if (studentList.length === 0) return;
+        stopRollingAndKeep();
+    });
+
+    randomMagicBtn.addEventListener('click', () => {
+        if (studentList.length === 0) return;
+        randomPickAndStop();
+    });
+
+    // 初始化所有，展示点名册并设置默认速度文本和快速点名氛围
+    buildGiantRoster();
+    updateSpeedText(speedKnob.value);
+    // 预置起始速度较快 (默认65ms，保证“速度快”的需求)，让点名飞速闪切
+    // 确保字体很大加上动画
+    // 而且一开始不做滚动，但用户一点开始就极为快速，符合“速度快”
+    // 额外设定初始展示人物高亮
+    if (studentList.length) {
+        highlightTileByName(currentDisplayName);
+    }
+
+    // 清理定时器 (页面关闭)
+    window.addEventListener('beforeunload', () => {
+        if (rollingTimer) clearInterval(rollingTimer);
+    });
+    
+    // 附加一点氛围: 开始点名时，如果飞快切换，中间停止时名字高光停留
+    console.log("🔥 极速点名器已加载，速度滚轮即调即变，字体超大！");
+</script>
+</body>
+</html>
